@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Long Live Lino</title>
+<style>
+  :root { --ink: rgba(240, 236, 228, .9); --soft: rgba(222, 226, 248, .6); --faint: rgba(210, 216, 245, .28); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #000104; color: var(--ink); }
+  body { font-family: "Avenir Next", "Avenir", "Helvetica Neue", sans-serif; -webkit-font-smoothing: antialiased; user-select: none; }
+  body.idle, body.idle * { cursor: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .hud { position: fixed; pointer-events: none; transition: opacity 2.4s ease, transform 2.4s cubic-bezier(.2, .7, .2, 1); }
+  #quote {
+    left: 50%; bottom: max(6.2vh, 22px); width: min(64vw, 900px); transform: translate(-50%, 6px); filter: blur(5px);
+    text-align: center; font-family: "Didot", "Bodoni 72", serif; font-style: italic; font-size: clamp(17px, 1.6vw, 30px);
+    line-height: 1.35; letter-spacing: .015em; color: rgba(240, 236, 228, .84); text-shadow: 0 0 24px rgba(150, 170, 255, .28);
+    opacity: 0; transition: opacity 1.6s ease, transform 2.2s cubic-bezier(.2, .7, .2, 1), filter 1.6s ease;
+  }
+  #quote.on { opacity: 1; transform: translate(-50%, 0); filter: blur(0); }
+  #quote.off { transition-duration: .9s, .9s, .9s; }
+  @media (max-aspect-ratio: 1/1) { #quote { width: 86vw; bottom: max(5vh, 22px); } body.quoted #sig { opacity: 0 !important; } }
+  #sig { right: max(5.5vw, 22px); bottom: max(7vh, 26px); text-align: right; font-size: clamp(9px, .74vw, 12px); letter-spacing: .46em; color: var(--faint); text-transform: uppercase; }
+  #hint { left: 50%; top: max(5vh, 20px); transform: translateX(-50%); white-space: nowrap; font-size: clamp(9px, .72vw, 11px); letter-spacing: .4em; text-transform: uppercase; color: var(--soft); opacity: 0; }
+  #hint.on { opacity: .7; }
+  /* leaving a light */
+  .ui { font-family: "Avenir Next", Avenir, sans-serif; }
+  #composer {
+    position: fixed; left: 50%; bottom: max(7vh, 20px); width: min(440px, calc(100vw - 32px)); transform: translate(-50%, 14px);
+    padding: 22px 22px 16px; border-radius: 16px; background: rgba(7, 9, 20, .74); border: 1px solid rgba(255, 255, 255, .08);
+    backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .8), 0 0 60px rgba(255, 210, 150, .06);
+    opacity: 0; pointer-events: none; transition: opacity .6s ease, transform .8s cubic-bezier(.2, .7, .2, 1);
+  }
+  #composer.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  #composer .c-title { font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: var(--soft); margin-bottom: 14px; }
+  #composer textarea, #composer input {
+    display: block; width: 100%; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .12);
+    color: var(--ink); outline: none; padding: 8px 0; resize: none; transition: border-color .4s;
+  }
+  #composer textarea { font-family: "Didot", "Bodoni 72", serif; font-style: italic; font-size: 19px; line-height: 1.4; }
+  #composer input { font-size: 13px; letter-spacing: .04em; margin-top: 10px; }
+  #composer textarea:focus, #composer input:focus { border-color: rgba(255, 214, 160, .5); }
+  #composer ::placeholder { color: rgba(220, 224, 245, .34); }
+  #composer .c-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+  #composer .c-count { flex: 1; font-size: 10px; letter-spacing: .2em; color: var(--faint); }
+  #composer button {
+    font: inherit; font-size: 10px; letter-spacing: .32em; text-transform: uppercase; padding: 10px 16px; border-radius: 999px;
+    background: transparent; color: var(--soft); border: 1px solid transparent; cursor: pointer; transition: all .3s;
+  }
+  #composer button:hover { color: var(--ink); }
+  #composer button[type=submit] { color: #ffe2b8; border-color: rgba(255, 214, 160, .38); }
+  #composer button[type=submit]:hover { background: rgba(255, 214, 160, .1); border-color: rgba(255, 214, 160, .7); }
+  #composer button:disabled { opacity: .4; cursor: default; }
+  #composer .c-status { min-height: 1em; margin-top: 8px; font-size: 11px; letter-spacing: .06em; color: var(--soft); }
+
+  /* reading one */
+  #note {
+    position: fixed; left: 0; top: 0; max-width: min(320px, 70vw); pointer-events: none; opacity: 0;
+    transition: opacity .9s ease; text-shadow: 0 0 18px rgba(0, 0, 0, .9);
+  }
+  #note.on { opacity: 1; }
+  #note .n-msg { font-family: "Didot", "Bodoni 72", serif; font-style: italic; font-size: clamp(15px, 1.25vw, 21px); line-height: 1.4; color: rgba(255, 240, 220, .92); }
+  #note .n-from { margin-top: .7em; font-size: 9px; letter-spacing: .36em; text-transform: uppercase; color: rgba(255, 214, 160, .62); }
+  #note .n-msg:empty { display: none; }
+  #note .n-msg:empty + .n-from { margin-top: 0; }
+
+  #nogl { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 24px; font-family: "Didot", serif; font-size: 22px; color: var(--soft); }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="quote" class="hud"></div>
+<div id="sig" class="hud">Long Live Lino</div>
+<div id="hint" class="hud">Touch the sky to leave a light for Lino &nbsp;·&nbsp; touch a star to read one</div>
+<form id="composer" class="ui" autocomplete="off">
+  <div class="c-title">Leave a light for Lino</div>
+  <textarea id="c-msg" maxlength="280" rows="3" placeholder="Write him a message (optional)"></textarea>
+  <input id="c-name" maxlength="40" placeholder="Your name (leave blank to stay anonymous)">
+  <div class="c-row"><span class="c-count" id="c-count"></span><button type="button" id="c-cancel">Cancel</button><button type="submit" id="c-send">Light it</button></div>
+  <div class="c-status" id="c-status"></div>
+</form>
+<div id="note"><div class="n-msg"></div><div class="n-from"></div></div>
+<div id="nogl">This tribute needs a browser with WebGL 2 (Chrome, Safari, Edge or Firefox).</div>
+
+<script src="data.js"></script>
+<script src="lights-config.js"></script>
+<script>
+(() => {
+"use strict";
+const D = window.LINO;
+const canvas = document.getElementById("c");
+const gl = canvas.getContext("webgl2", { antialias: false, alpha: false, premultipliedAlpha: true, powerPreference: "high-performance" });
+if (!gl) { document.getElementById("nogl").style.display = "flex"; return; }
+const HDR = !!gl.getExtension("EXT_color_buffer_float");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ===================================================================== timing
+const TRANS = 4.4;                    // seconds: one photo drifts into the next
+const HOLD = 4.8, HOLD_EXTRA = 2.5, HOLD_QUOTE = 2.6, HOLD_TITLE = 7, HOLD_END = 8;
+const INTERLUDE = 18;                 // photos between name cards
+const GRID = [480, 360], N = GRID[0] * GRID[1];   // stardust grains per photo
+const FOV = 34 * Math.PI / 180;
+
+// ===================================================================== shaders
+const NOISE = `
+float hash12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * .1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float vnoise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f*f*(3.-2.*f);
+  return mix(mix(hash12(i), hash12(i+vec2(1,0)), u.x), mix(hash12(i+vec2(0,1)), hash12(i+vec2(1,1)), u.x), u.y); }
+float fbm(vec2 p){ float v = 0., a = .5; mat2 r = mat2(.8,-.6,.6,.8);
+  for (int i = 0; i < 6; i++){ v += a*vnoise(p); p = r*p*2.03 + vec2(1.7, 9.2); a *= .5; } return v; }
+`;
+// shared by the photo and its dust, so both agree on where the edges have turned to dust
+const EDGE = `
+float edgeMask(vec2 uv, vec2 size, float t){
+  float ed = min(min(uv.x*size.x, (1.-uv.x)*size.x), min(uv.y*size.y, (1.-uv.y)*size.y));
+  float Z = .06*min(size.x, size.y);
+  float n = vnoise(uv*vec2(size.x/size.y, 1.)*6. + vec2(t*.04, -t*.025)) - .5;
+  return 1. - smoothstep(0., Z, ed + n*Z*1.1);
+}
+`;
+// when the dissolve front reaches a point: the photo and its dust share it, so they hand off seamlessly
+const SWEEP = `
+float sweepJitter(vec2 uv, vec2 size){ vec2 q = uv*size; return vnoise(q/110.)*.7 + vnoise(q/26. + 7.)*.3; }
+float sweepT(vec2 uv, float jitter, float p, float wind){
+  float s = wind > 0. ? uv.x : 1. - uv.x;
+  float d = (s*.76 + jitter*.24) * .66;
+  return clamp((p - d) / .34, 0., 1.);
+}
+`;
+// contrast grade laid over every photo: deeper blacks, gentle S-curve, cool shadows / warm highlights, inner vignette
+const GRADE = `
+vec3 grade(vec3 c, vec2 uv){
+  c = clamp((c - .035) / .95, 0., 1.);
+  c = mix(c, c*c*(3. - 2.*c), .36);
+  float l = dot(c, vec3(.3, .59, .11));
+  c = mix(vec3(l), c, .92);
+  c *= mix(vec3(.92, .96, 1.07), vec3(1.04, 1., .94), smoothstep(.12, .8, l));
+  c *= mix(.76, 1., smoothstep(.66, .2, length((uv - .5)*vec2(1.04, 1.))));
+  return c;
+}
+`;
+
+const VS_FULL = `#version 300 es
+out vec2 vUv;
+void main(){ vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2); vUv = p; gl_Position = vec4(p*2.-1., 0, 1); }`;
+
+const FS_NEBULA = `#version 300 es
+precision highp float;
+in vec2 vUv; out vec4 o;
+uniform float uTime, uAspect; uniform vec2 uCam; uniform vec3 uTone;
+${NOISE}
+void main(){
+  vec2 uv = (vUv - .5) * vec2(uAspect, 1.);
+  vec2 p = uv*1.45 + uCam*.00022;
+  float t = uTime*.009;
+  vec2 q = vec2(fbm(p + t), fbm(p + vec2(5.2, 1.3) - t));
+  vec2 r = vec2(fbm(p + 3.2*q + vec2(1.7, 9.2) + t*1.3), fbm(p + 3.2*q + vec2(8.3, 2.8) - t*.8));
+  float f = fbm(p + 2.6*r);
+  float band = exp(-pow(uv.y*1.15 + uv.x*.42 + .08*sin(uv.x*2.3 + t*4.), 2.) * 3.6);
+  float dens = smoothstep(.4, 1., f);
+  vec3 violet = mix(vec3(.17, .1, .4), uTone, .32);
+  vec3 teal   = mix(vec3(.03, .2, .34), uTone.bgr, .2);
+  vec3 ember  = mix(vec3(.9, .55, .38), uTone, .3);
+  vec3 col = vec3(.002, .003, .011) + vec3(.004, .005, .016)*(1. - vUv.y);
+  col += violet * dens * (.08 + .5*band);
+  col += teal * pow(length(q), 2.4) * .1 * (.25 + band);
+  col += ember * pow(f, 6.) * band * .7;
+  col *= 1. - .7*smoothstep(.48, .76, fbm(p*2.3 - r*1.4 + 4.))*band;      // dark dust lanes
+  float m = smoothstep(1.1, .2, length(uv*vec2(.75, 1.1)));              // darker toward the frame edges
+  o = vec4(col * mix(.45, 1., m), 1.);
+}`;
+
+const FS_COPY = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uTex;
+void main(){ o = vec4(texture(uTex, vUv).rgb, 1.); }`;
+
+const VS_STAR = `#version 300 es
+precision highp float;
+in vec3 aPos; in vec4 aInfo;            // size, phase, warm, birth
+uniform mat4 uVP; uniform float uTime, uDpr; uniform vec4 uHover;   // world xyz of the star being read, amount
+out vec3 vCol;
+void main(){
+  vec4 clip = uVP * vec4(aPos, 1.); gl_Position = clip;
+  float hov = uHover.w * step(distance(aPos, uHover.xyz), 1.);
+  float sp = .4 + fract(aInfo.y*7.31)*1.6;
+  float tw = .66 + .34*sin(uTime*sp + aInfo.y*6.283) * sin(uTime*sp*.37 + aInfo.y*17.);
+  float born = aInfo.w > -1. ? 1. : 0.;
+  float age = uTime - aInfo.w;
+  float grow = mix(1., smoothstep(0., 2.4, age), born);
+  float flash = born * exp(-age*.9) * 2.2;
+  gl_PointSize = max(aInfo.x * (1. + flash*.3 + hov*.9) * grow * uDpr * 5., 1.);
+  vec3 c = mix(vec3(.76, .83, 1.), vec3(1., .8, .55), aInfo.z);
+  vCol = c * (tw + flash + hov*1.6) * mix(1.1, 2.2, aInfo.z) * grow;
+}`;
+const FS_STAR = `#version 300 es
+precision highp float; in vec3 vCol; out vec4 o;
+void main(){ vec2 c = gl_PointCoord*2.-1.; float r2 = dot(c, c); if (r2 > 1.) discard;
+  float core = exp(-r2*26.), halo = exp(-r2*5.)*.18;
+  float spike = (exp(-abs(c.x)*30.) + exp(-abs(c.y)*30.)) * exp(-r2*3.) * .14;
+  o = vec4(vCol*(core + halo + spike), 0.); }`;
+
+const VS_METEOR = `#version 300 es
+precision highp float;
+uniform mat4 uVP; uniform vec3 uHead, uDir; uniform float uLen, uAlpha, uDpr;
+out vec3 vCol;
+void main(){ float k = float(gl_VertexID)/63.;
+  vec4 clip = uVP * vec4(uHead - uDir*uLen*k, 1.); gl_Position = clip;
+  gl_PointSize = mix(2.6, .7, k) * uDpr * 4.;
+  vCol = vec3(.85, .9, 1.) * pow(1. - k, 1.8) * uAlpha * 1.2; }`;
+
+const VS_PLANE = `#version 300 es
+precision highp float;
+uniform mat4 uVP; uniform vec4 uRect;
+out vec2 vUv;
+void main(){ vec2 q = vec2(gl_VertexID & 1, gl_VertexID >> 1);
+  vUv = q; gl_Position = uVP * vec4(uRect.xy + (q - .5)*uRect.zw, 0., 1.); }`;
+const FS_PLANE = `#version 300 es
+precision highp float;
+in vec2 vUv; out vec4 o;
+uniform sampler2D uTex; uniform float uTime, uP, uWind; uniform vec4 uRect; uniform int uGrade, uIncoming;
+${NOISE}${EDGE}${SWEEP}${GRADE}
+void main(){
+  vec4 c = texture(uTex, vUv);                      // premultiplied
+  if (uGrade == 1) c.rgb = grade(c.rgb, vUv) * c.a;
+  float t = sweepT(vUv, sweepJitter(vUv, uRect.zw), uP, uWind);
+  float a = uIncoming == 1 ? smoothstep(.38, .86, t) : 1. - smoothstep(.14, .62, t);
+  o = c * a * (1. - edgeMask(vUv, uRect.zw, uTime));
+}`;
+
+const VS_DUST = `#version 300 es
+precision highp float; precision highp int;
+uniform mat4 uVP; uniform float uTime, uP, uDpr, uFocal, uWind;
+uniform int uHasA, uGradeA, uGradeB;
+uniform ivec2 uGrid;
+uniform sampler2D uTexA, uTexB; uniform float uLodA, uLodB;
+uniform vec4 uRectA, uRectB;
+out vec4 vCol; out float vAdd, vSoft;
+${NOISE}${EDGE}${SWEEP}${GRADE}
+uint hu(uint x){ x ^= x >> 16; x *= 0x7feb352du; x ^= x >> 15; x *= 0x846ca68bu; x ^= x >> 16; return x; }
+float rnd(uint i, uint k){ return float(hu(i*9u + k)) / 4294967295.; }
+vec3 unpre(vec4 c){ return c.rgb / max(c.a, .002); }
+const float PI = 3.14159265;
+
+void main(){
+  uint i = uint(gl_VertexID);
+  float r1 = rnd(i, 1u), r2 = rnd(i, 2u), r3 = rnd(i, 3u), r4 = rnd(i, 4u), r5 = rnd(i, 5u);
+  vec2 uv = (vec2(float(i % uint(uGrid.x)), float(i / uint(uGrid.x))) + vec2(r1, r2)) / vec2(uGrid);
+  vec4 cA = textureLod(uTexA, uv, uLodA), cB = textureLod(uTexB, uv, uLodB);
+  vec3 colA = unpre(cA), colB = unpre(cB);
+  if (uGradeA == 1) colA = grade(colA, uv);
+  if (uGradeB == 1) colB = grade(colB, uv);
+  vec3 B = vec3(uRectB.xy + (uv - .5)*uRectB.zw, 0.);
+  vec3 A = vec3(uRectA.xy + (uv - .5)*uRectA.zw, 0.);
+  float aA = cA.a;
+  if (uHasA == 0) { A = B + vec3(-uWind*(90. + 140.*r3), (r4 - .5)*70., (r5 - .5)*140.); colA = colB; aA = 0.; }
+
+  // one soft sweep: at the front each grain lifts off, rides a slow breeze and settles into the next memory
+  float t = sweepT(uv, sweepJitter(uv, uRectB.zw)*.85 + r1*.15, uP, uWind);
+  float e5 = t*t*t*(t*(t*6. - 15.) + 10.);
+  float arc = sin(t*PI);
+  float bz = vnoise(uv*3.2 + vec2(uTime*.04, 0.)) - .5;
+  vec3 drift = vec3(uWind*(18. + 48.*r3), bz*40. + 8., (r4 - .5)*50.);
+  vec3 P = mix(A, B, e5) + drift*arc;
+
+  // the resting photo's edges slowly evaporate into the sky
+  float e = edgeMask(uv, uRectB.zw, uTime) * t;
+  float ph = fract(uTime*.04 + r2*7.);
+  P += vec3((r3 - .5)*.7, .3 + r4*.5, (r5 - .5)) * 34. * ph * e;
+
+  vec3 glow = vec3(.86, .9, 1.) * (1. + .9*pow(r5, 12.));
+  vec3 col = mix(colA, colB, smoothstep(.35, .65, t));
+  col = mix(col, glow, arc*.12);
+  col = mix(col, colB*.85 + glow*.12, min(e*ph*1.3, 1.));
+
+  float alpha = mix(aA, cB.a, t);
+  float front = smoothstep(0., .25, t) * (1. - smoothstep(.75, 1., t)) * step(r3, .32);  // only a sparse shimmer travels
+  float edgeShow = e * (1. - ph) * smoothstep(0., .06, ph) * .6;
+  alpha *= max(front * .7, edgeShow);
+
+  float g = max(mix(uRectA.z, uRectB.z, t)/float(uGrid.x), mix(uRectA.w, uRectB.w, t)/float(uGrid.y)) * 1.55;
+  float size = g * (1. - .3*arc) * mix(1., .75, min(e*ph*1.5, 1.));
+
+  vec4 clip = uVP * vec4(P, 1.);
+  gl_Position = alpha < .004 ? vec4(2., 2., 2., 1.) : clip;
+  gl_PointSize = clamp(size * uDpr * uFocal / clip.w, 1., 64.);
+  vCol = vec4(col, alpha);
+  vAdd = clamp(arc*.35 + e*.7, 0., 1.);
+  vSoft = clamp(arc*1.6 + e, 0., 1.);
+}`;
+const FS_DUST = `#version 300 es
+precision highp float;
+in vec4 vCol; in float vAdd, vSoft; out vec4 o;
+void main(){ vec2 c = gl_PointCoord*2.-1.; float r2 = dot(c, c); if (r2 > 1.) discard;
+  float a = mix(1. - smoothstep(.5, 1., r2), exp(-r2*4.), vSoft) * vCol.a;
+  o = vec4(vCol.rgb*a, a*(1. - vAdd)); }`;
+
+const FS_BRIGHT = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uTex; uniform float uThr;
+void main(){ vec3 c = texture(uTex, vUv).rgb; float b = max(c.r, max(c.g, c.b));
+  float k = clamp(b - uThr + .25, 0., .5); k = k*k/(2.*.25*2.);
+  o = vec4(c * max(k, b - uThr) / max(b, 1e-4), 1.); }`;
+const FS_DOWN = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uTex; uniform vec2 uTexel;
+void main(){ vec2 h = uTexel;
+  o = (texture(uTex, vUv)*4. + texture(uTex, vUv - h) + texture(uTex, vUv + h) + texture(uTex, vUv + vec2(h.x, -h.y)) + texture(uTex, vUv - vec2(h.x, -h.y))) / 8.; }`;
+const FS_UP = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o; uniform sampler2D uTex; uniform vec2 uTexel;
+void main(){ vec2 h = uTexel;
+  vec4 s = texture(uTex, vUv + vec2(-2.*h.x, 0.)) + texture(uTex, vUv + vec2(2.*h.x, 0.)) + texture(uTex, vUv + vec2(0., 2.*h.y)) + texture(uTex, vUv + vec2(0., -2.*h.y));
+  s += (texture(uTex, vUv + vec2(-h.x, h.y)) + texture(uTex, vUv + h) + texture(uTex, vUv + vec2(h.x, -h.y)) + texture(uTex, vUv - h)) * 2.;
+  o = s / 12.; }`;
+const FS_FINAL = `#version 300 es
+precision highp float; in vec2 vUv; out vec4 o;
+uniform sampler2D uScene, uBloom; uniform float uTime, uAspect, uFade, uBloomK;
+float h(vec2 p){ vec3 p3 = fract(vec3(p.xyx)*.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y)*p3.z); }
+vec3 shoulder(vec3 x){ vec3 k = vec3(.8); return mix(x, k + (1. - k)*tanh((x - k)/(1. - k)), step(k, x)); }
+void main(){
+  vec2 d = vUv - .5; float ca = dot(d, d) * .006;
+  vec3 c = vec3(texture(uScene, vUv + d*ca).r, texture(uScene, vUv).g, texture(uScene, vUv - d*ca).b);
+  c += texture(uBloom, vUv).rgb * uBloomK;
+  c = shoulder(c);
+  float v = length(d*vec2(uAspect, 1.)*vec2(.92, 1.15));
+  c *= mix(.3, 1., smoothstep(1.05, .3, v));
+  c += (h(gl_FragCoord.xy + fract(uTime*7.1)*391.) - .5) * .026;
+  o = vec4(max(c, 0.) * uFade, 1.);
+}`;
+
+// ===================================================================== GL helpers
+function program(vs, fs) {
+  const p = gl.createProgram();
+  for (const [type, src] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) + "\n" + src.split("\n").map((l, i) => (i + 1) + ": " + l).join("\n"));
+    gl.attachShader(p, s);
+  }
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+  const u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name; u[name] = gl.getUniformLocation(p, name); }
+  return { p, u };
+}
+const P = {
+  nebula: program(VS_FULL, FS_NEBULA), copy: program(VS_FULL, FS_COPY),
+  star: program(VS_STAR, FS_STAR), meteor: program(VS_METEOR, FS_STAR),
+  plane: program(VS_PLANE, FS_PLANE), dust: program(VS_DUST, FS_DUST),
+  bright: program(VS_FULL, FS_BRIGHT), down: program(VS_FULL, FS_DOWN), up: program(VS_FULL, FS_UP), final: program(VS_FULL, FS_FINAL),
+};
+const emptyVAO = gl.createVertexArray();
+
+function target(w, h, hdr) {
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  if (hdr && HDR) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.HALF_FLOAT, null);
+  else gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+  const f = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+  return { t, f, w, h };
+}
+function free(rt) { if (rt) { gl.deleteTexture(rt.t); gl.deleteFramebuffer(rt.f); } }
+
+function imageTexture(src) {
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
+
+// ===================================================================== matrices
+const persp = (fy, a, n, f) => { const t = 1 / Math.tan(fy / 2), r = 1 / (n - f); return [t / a, 0, 0, 0, 0, t, 0, 0, 0, 0, (n + f) * r, -1, 0, 0, 2 * n * f * r, 0]; };
+function lookAt(e, c, up) {
+  let z = [e[0] - c[0], e[1] - c[1], e[2] - c[2]]; const zl = Math.hypot(...z); z = z.map(v => v / zl);
+  let x = [up[1] * z[2] - up[2] * z[1], up[2] * z[0] - up[0] * z[2], up[0] * z[1] - up[1] * z[0]]; const xl = Math.hypot(...x); x = x.map(v => v / xl);
+  const y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x, e), -dot(y, e), -dot(z, e), 1];
+}
+function mul(a, b) { const o = new Array(16); for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; }
+
+// ===================================================================== sizing
+let W, H, dpr, rtScene, rtNebula, bloom = [], camD;
+let stars, starCount, starVAO, starBuf;
+const MAX_LIGHTS = 3000;
+const lights = [];                       // {id, nx, ny, z, message, name, size, phase, birth}
+function resize() {
+  W = innerWidth; H = innerHeight;
+  dpr = Math.min(devicePixelRatio || 1, 2);
+  if (W * H * dpr * dpr > 8.3e6) dpr = Math.sqrt(8.3e6 / (W * H));
+  canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  camD = H / 2 / Math.tan(FOV / 2);
+  free(rtScene); free(rtNebula); bloom.forEach(free);
+  rtScene = target(canvas.width, canvas.height, true);
+  rtNebula = target(Math.max(2, Math.round(W * .5)), Math.max(2, Math.round(H * .5)), false);
+  bloom = [];
+  let bw = canvas.width >> 1, bh = canvas.height >> 1;
+  for (let i = 0; i < 6 && bw > 8 && bh > 8; i++) { bloom.push(target(bw, bh, true)); bw >>= 1; bh >>= 1; }
+  buildStars();
+  nebulaDirty = true;
+}
+function buildStars() {
+  const count = Math.round(Math.min(4800, 1800 + W * H / 750));
+  const data = new Float32Array((count + MAX_LIGHTS) * 7);
+  for (let i = 0; i < count; i++) {
+    const z = -180 - Math.pow(Math.random(), 1.35) * 6500;
+    const spread = (camD - z) / camD * 1.25;
+    const bright = Math.random() < .03;
+    data.set([(Math.random() - .5) * W * spread, (Math.random() - .5) * H * spread, z,
+              (bright ? 1.3 + Math.random() * 1.4 : .3 + Math.pow(Math.random(), 3) * 1.), Math.random(), Math.random() < .07 ? .35 : 0, -1e4], i * 7);
+  }
+  stars = data; starCount = count;
+  if (!starVAO) {
+    starVAO = gl.createVertexArray(); starBuf = gl.createBuffer();
+    gl.bindVertexArray(starVAO); gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
+    const aPos = gl.getAttribLocation(P.star.p, "aPos"), aInfo = gl.getAttribLocation(P.star.p, "aInfo");
+    gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 28, 0);
+    gl.enableVertexAttribArray(aInfo); gl.vertexAttribPointer(aInfo, 4, gl.FLOAT, false, 28, 12);
+    gl.bindVertexArray(null);
+  }
+  uploadStars();
+}
+// a light is stored by where it sat on screen (nx, ny in -1..1) and its depth, so it keeps its place on any screen
+function lightWorld(l) { const k = (camD - l.z) / camD; return [l.nx * W / 2 * k, l.ny * H / 2 * k, l.z]; }
+function uploadStars() {
+  lights.slice(-MAX_LIGHTS).forEach((l, k) => { const w = lightWorld(l); stars.set([w[0], w[1], w[2], l.size, l.phase, 1, l.birth], (starCount + k) * 7); });
+  gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, stars, gl.DYNAMIC_DRAW);
+}
+
+// layout of one slide in world units (1 unit = 1 CSS px on the z = 0 plane)
+function rectFor(s) {
+  const portrait = W / H < 1;
+  const maxW = W * (s.text ? .9 : portrait ? .88 : .72), maxH = H * (s.text ? .5 : portrait ? (s.quote ? .58 : .62) : (s.quote ? .66 : .72));
+  let w = maxW, h = w / s.aspect;
+  if (h > maxH) { h = maxH; w = h * s.aspect; }
+  return [0, portrait && !s.text ? H * .03 : 0, w, h];
+}
+
+// ===================================================================== slides
+// photos play in a fresh random order every pass (no repeats within a pass, never two from the
+// same moment back to back), with his name returning every INTERLUDE photos
+const PHOTOS = D.chapters.flatMap(c => c.slides.flat()).map(it => ({
+  key: it.key, aspect: it.w / it.h, fx: it.fx, fy: it.fy, tone: it.tone, group: it.group, quote: it.quote,
+  hold: HOLD + (it.hold ? HOLD_EXTRA : 0) + (it.quote ? HOLD_QUOTE : 0) }));
+const CARDS = {
+  title: { text: "title", aspect: 2.7, hold: HOLD_TITLE, fx: .5, fy: .5, tone: [70, 74, 150] },
+  end: { text: "end", aspect: 2.7, hold: HOLD_END, fx: .5, fy: .45, tone: [120, 96, 170] } };
+const seq = [CARDS.title];
+let sinceCard = 0, nextCard = "end";
+function shuffled() {
+  const lastGroup = () => { for (let i = seq.length - 1; i >= 0; i--) if (seq[i].group) return seq[i].group; return 0; };
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const d = PHOTOS.slice();
+    for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
+    if (d.every((p, i) => p.group !== (i ? d[i - 1].group : lastGroup()))) return d;
+  }
+  return PHOTOS.slice();
+}
+function slideAt(i) {
+  while (seq.length <= i) for (const p of shuffled()) {
+    seq.push(p);
+    if (++sinceCard >= INTERLUDE) { seq.push(CARDS[nextCard]); nextCard = nextCard === "end" ? "title" : "end"; sinceCard = 0; }
+  }
+  return seq[i];
+}
+
+function spaced(g, text, x, y, track) {
+  const chars = [...text], widths = chars.map(ch => g.measureText(ch).width);
+  const total = widths.reduce((a, b) => a + b, 0) + track * (chars.length - 1);
+  let cx = x - total / 2;
+  g.textAlign = "left";
+  chars.forEach((ch, i) => { g.fillText(ch, cx, y); cx += widths[i] + track; });
+  g.textAlign = "center";
+}
+function fit(g, text, font, size, maxW) {
+  g.font = font(size); const w = g.measureText(text).width;
+  if (w > maxW) g.font = font(size * maxW / w);
+}
+function textCanvas(kind) {
+  const w = 2700, h = Math.round(w / 2.7), c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const g = c.getContext("2d"), t = D.title;
+  g.fillStyle = "#f4f0e8"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.shadowColor = "rgba(170, 185, 255, .4)"; g.shadowBlur = h * .03;
+  if (kind === "title") {
+    g.font = `500 ${h * .048}px "Avenir Next", Avenir, sans-serif`;
+    spaced(g, t.title_top, w / 2, h * .2, h * .048 * .45);
+    fit(g, t.title_name, s => `400 ${s}px Didot, "Bodoni 72", serif`, h * .25, w * .94);
+    g.fillText(t.title_name, w / 2, h * .5);
+    g.font = `500 ${h * .044}px "Avenir Next", Avenir, sans-serif`;
+    spaced(g, t.title_dates.replace(/\s+—\s+/, "   —   "), w / 2, h * .8, h * .044 * .36);
+  } else {
+    fit(g, t.end_text, s => `italic 400 ${s}px Didot, "Bodoni 72", serif`, h * .34, w * .9);
+    g.fillText(t.end_text, w / 2, h * .42);
+    g.font = `500 ${h * .04}px "Avenir Next", Avenir, sans-serif`;
+    spaced(g, t.title_name.toUpperCase(), w / 2, h * .76, h * .04 * .5);
+  }
+  return c;
+}
+
+const texCache = new Map();               // seq index -> {tex, w, h} | "loading"
+function ensure(idx) {
+  idx = Math.max(0, idx); slideAt(idx);
+  if (texCache.has(idx)) return texCache.get(idx) !== "loading";
+  const s = seq[idx];
+  if (s.text) { const c = textCanvas(s.text); texCache.set(idx, { tex: imageTexture(c), w: c.width, h: c.height }); return true; }
+  texCache.set(idx, "loading");
+  const withData = () => {
+    const img = new Image();
+    img.onload = () => texCache.set(idx, { tex: imageTexture(img), w: img.naturalWidth, h: img.naturalHeight });
+    img.onerror = () => texCache.delete(idx);
+    img.src = window.LINO_IMG[s.key];
+  };
+  if (window.LINO_IMG[s.key]) return withData(), false;
+  const sc = document.createElement("script");
+  sc.src = `photos/${s.key}.js`; sc.onload = () => { withData(); sc.remove(); }; sc.onerror = () => texCache.delete(idx);
+  document.head.appendChild(sc);
+  return false;
+}
+function evict(keep) {
+  for (const [i, v] of texCache) if (!keep.includes(i) && v !== "loading") { gl.deleteTexture(v.tex); texCache.delete(i); }
+}
+
+// ===================================================================== show state
+const clock = { t: 0 };                   // advances only when not paused
+let paused = false;
+let A = null, B = null;                   // seq indices
+let phase = "trans", phaseT0 = 0, startP = 0, wind = 1;
+let cam = { from: [0, 0, 1], to: [0, 0, 1], t0: 0, dur: 1 };
+const tone = [.28, .3, .6];
+
+const smooth = k => k * k * k * (k * (k * 6 - 15) + 10);
+function camAt(t) { const k = Math.min(1, Math.max(0, (t - cam.t0) / cam.dur)), e = smooth(k); return cam.from.map((v, i) => v + (cam.to[i] - v) * e); }
+function focusWorld(s) { const r = rectFor(s); return [r[0] + (s.fx - .5) * r[2], r[1] + (.5 - s.fy) * r[3]]; }
+
+function beginTransition(idx) {
+  A = B; B = Math.max(0, idx); startP = 0; wind = -wind;
+  phase = "trans"; phaseT0 = clock.t;
+  cam = { from: camAt(clock.t), to: [0, 0, camD], t0: clock.t, dur: TRANS };
+  quoteOff();
+}
+function beginHold() {
+  phase = "hold"; phaseT0 = clock.t;
+  const s = seq[B], f = focusWorld(s);
+  cam = { from: camAt(clock.t), to: [f[0] * .12, f[1] * .12, camD * (s.text ? .96 : .91)], t0: clock.t, dur: s.hold + TRANS * .4 };
+  if (s.quote) { quoteDue = clock.t + 1.1; quoteEnd = clock.t + s.hold - .7; }
+  document.getElementById("sig").style.opacity = s.text ? 0 : 1;
+}
+const quoteEl = document.getElementById("quote");
+let quoteDue = Infinity, quoteEnd = Infinity;
+function quoteOn(text) { quoteEl.textContent = text; quoteEl.classList.remove("off"); quoteEl.classList.add("on"); document.body.classList.add("quoted"); }
+function quoteOff() {
+  quoteDue = quoteEnd = Infinity;
+  if (quoteEl.classList.contains("on")) { quoteEl.classList.add("off"); quoteEl.classList.remove("on"); }
+  document.body.classList.remove("quoted");
+}
+
+// ===================================================================== input
+let mx = 0, my = 0, smx = 0, smy = 0, lastMove = -1e9;
+let meteor = null, nextMeteor = 10 + Math.random() * 12;
+addEventListener("pointermove", e => {
+  mx = e.clientX / W * 2 - 1; my = e.clientY / H * 2 - 1;
+  lastMove = performance.now(); document.body.classList.remove("idle");
+});
+addEventListener("pointerdown", e => {
+  lastMove = performance.now();
+  if (e.target.closest(".ui")) return;
+  if (composing) { closeComposer(); return; }
+  const hit = lightAt(e.clientX, e.clientY, e.pointerType === "touch" ? 30 : 18);
+  if (hit) { showNote(hit, 7000); return; }
+  if (onPhoto(e.clientX, e.clientY)) return;
+  openComposer(e.clientX, e.clientY);
+});
+addEventListener("keydown", e => {
+  if (e.target.closest && e.target.closest(".ui")) { if (e.key === "Escape") closeComposer(); return; }
+  if (e.key === "f" || e.key === "F") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+  else if (e.key === " ") { e.preventDefault(); paused = !paused; }
+  else if (e.key === "ArrowRight" && phase === "hold" && ensure(B + 1)) beginTransition(B + 1);
+  else if (e.key === "ArrowLeft" && phase === "hold" && ensure(B - 1)) beginTransition(B - 1);
+});
+setInterval(() => { if (performance.now() - lastMove > 3000) document.body.classList.add("idle"); }, 1000);
+const hint = document.getElementById("hint");
+setTimeout(() => hint.classList.add("on"), 4000);
+setTimeout(() => hint.classList.remove("on"), 12000);
+
+let eye = [0, 0, 1], look = [0, 0, 0];
+function screenToWorld(sx, sy, z) {
+  const nx = sx / W * 2 - 1, ny = 1 - sy / H * 2, k = (eye[2] - z) / camD;
+  return [look[0] + nx * (W / 2) * k, look[1] + ny * (H / 2) * k];
+}
+
+// ===================================================================== lights left for Lino
+// Stored in a shared Supabase table when lights-config.js has a project; otherwise only on this device.
+const CFG = window.LIGHTS_CONFIG || {};
+const composer = document.getElementById("composer"), cMsg = document.getElementById("c-msg"), cName = document.getElementById("c-name");
+const cStatus = document.getElementById("c-status"), cCount = document.getElementById("c-count"), cSend = document.getElementById("c-send");
+const noteEl = document.getElementById("note");
+let sb = null, composing = null, lastVP = null, reading = null, nextSurface = 25;
+
+function seeded(str) { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) / 4294967296; }
+function addLight(r, fresh) {
+  if (lights.some(l => l.id === r.id)) return null;
+  // our own light echoing back over realtime before the insert has answered
+  if (composing && composing.id === "pending" && Math.abs(composing.nx - r.nx) < 1e-3 && Math.abs(composing.ny - r.ny) < 1e-3) return null;
+  const sd = seeded(String(r.id));
+  const l = { id: r.id, nx: +r.nx, ny: +r.ny, z: +r.z, message: r.message || "", name: r.name || "",
+              size: 1.5 + sd * .8, phase: seeded(r.id + "p"), birth: fresh ? now() : -1e4 };
+  lights.push(l); uploadStars();
+  return l;
+}
+function project(x, y, z) {
+  const m = lastVP; if (!m) return null;
+  const cx = m[0] * x + m[4] * y + m[8] * z + m[12], cy = m[1] * x + m[5] * y + m[9] * z + m[13], cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+  return cw > 0 ? [(cx / cw + 1) / 2 * W, (1 - cy / cw) / 2 * H] : null;
+}
+function onPhoto(sx, sy) {
+  const s = B !== null ? seq[B] : null; if (!s || !lastVP) return false;
+  const r = rectFor(s), a = project(r[0] - r[2] / 2, r[1] + r[3] / 2, 0), b = project(r[0] + r[2] / 2, r[1] - r[3] / 2, 0);
+  return a && b && sx > a[0] && sx < b[0] && sy > a[1] && sy < b[1];
+}
+function lightAt(sx, sy, radius) {
+  let best = null, bd = radius;
+  for (const l of lights) {
+    if (l.id === "pending") continue;
+    const w = lightWorld(l), p = project(w[0], w[1], w[2]);
+    if (!p || onPhoto(p[0], p[1])) continue;
+    const d = Math.hypot(p[0] - sx, p[1] - sy);
+    if (d < bd) { bd = d; best = l; }
+  }
+  return best;
+}
+
+function showNote(l, ms) {
+  noteEl.querySelector(".n-msg").textContent = l.message;
+  noteEl.querySelector(".n-from").textContent = l.message ? "— " + (l.name || "Anonymous") : l.name ? "A light from " + l.name : "A light for Lino";
+  reading = { light: l, until: ms ? performance.now() + ms : Infinity, amount: 0 };
+  placeNote(); noteEl.classList.add("on");
+}
+function hideNote() { if (reading) reading.until = 0; }
+function placeNote() {
+  if (!reading) return;
+  const w = lightWorld(reading.light), p = project(w[0], w[1], w[2]); if (!p) return;
+  const bw = noteEl.offsetWidth, bh = noteEl.offsetHeight, gap = 18;
+  let x = p[0] + gap, y = p[1] - bh / 2;
+  if (x + bw > W - 16) { x = p[0] - gap - bw; noteEl.style.textAlign = "right"; } else noteEl.style.textAlign = "left";
+  y = Math.max(16, Math.min(H - bh - 16, y));
+  noteEl.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+}
+// hover to read; when nobody is touching the screen, the sky offers one now and then
+function readLights(t) {
+  const active = performance.now() - lastMove < 3000;
+  if (active && !composing && lastPointer) {
+    const hit = lightAt(lastPointer[0], lastPointer[1], 18);
+    if (hit && (!reading || reading.light !== hit)) showNote(hit, 0);
+    else if (!hit && reading && reading.until === Infinity) hideNote();
+  }
+  if (!active && !composing && t > nextSurface && (!reading || reading.until < performance.now())) {
+    nextSurface = t + 18 + Math.random() * 10;
+    const pool = lights.filter(l => l.id !== "pending" && l.message && (() => { const w = lightWorld(l), p = project(w[0], w[1], w[2]); return p && !onPhoto(p[0], p[1]) && p[0] > 40 && p[0] < W - 40 && p[1] > 40 && p[1] < H - 40; })());
+    if (pool.length) showNote(pool[Math.floor(Math.random() * pool.length)], 7500);
+  }
+  if (reading) {
+    const on = performance.now() < reading.until;
+    reading.amount += ((on ? 1 : 0) - reading.amount) * .08;
+    if (on) placeNote();
+    else { noteEl.classList.remove("on"); if (reading.amount < .02) reading = null; }
+  }
+}
+let lastPointer = null;
+addEventListener("pointermove", e => { lastPointer = [e.clientX, e.clientY]; });
+
+function openComposer(sx, sy) {
+  const z = -320 - Math.random() * 480, w = screenToWorld(sx, sy, z), k = (camD - z) / camD;
+  const l = addLight({ id: "pending", nx: w[0] / (W / 2 * k), ny: w[1] / (H / 2 * k), z }, true);
+  composing = l; hideNote();
+  cMsg.value = ""; cStatus.textContent = ""; cSend.disabled = false; updateCount();
+  composer.classList.add("on");
+  setTimeout(() => cMsg.focus({ preventScroll: true }), 250);
+}
+function closeComposer(keep) {
+  if (!composing) return;
+  if (!keep) { lights.splice(lights.indexOf(composing), 1); uploadStars(); }
+  composing = null; composer.classList.remove("on"); cMsg.blur(); cName.blur();
+}
+function updateCount() { const n = 280 - cMsg.value.length; cCount.textContent = n < 60 ? n + " left" : ""; }
+cMsg.addEventListener("input", updateCount);
+document.getElementById("c-cancel").addEventListener("click", () => closeComposer());
+composer.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!composing) return;
+  let lastSent = 0; try { lastSent = +localStorage.getItem("lino-last-light") || 0; } catch (_) {}
+  if (Date.now() - lastSent < 15000) { cStatus.textContent = "Give it a moment before lighting another."; return; }
+  const l = composing, rec = { nx: +l.nx.toFixed(4), ny: +l.ny.toFixed(4), z: Math.round(l.z),
+    message: cMsg.value.trim().slice(0, 280) || null, name: cName.value.trim().slice(0, 40) || null };
+  cSend.disabled = true; cStatus.textContent = "Lighting…";
+  try {
+    l.id = await saveLight(rec); l.message = rec.message || ""; l.name = rec.name || "";
+    try { localStorage.setItem("lino-last-light", String(Date.now())); localStorage.setItem("lino-name", rec.name || ""); } catch (_) {}
+    l.birth = now(); uploadStars();
+    closeComposer(true);
+    setTimeout(() => showNote(l, 6000), 900);
+  } catch (err) {
+    console.warn("[lights] save failed", err);
+    cSend.disabled = false; cStatus.textContent = "That didn't go through. Please try again.";
+  }
+});
+try { cName.value = localStorage.getItem("lino-name") || ""; } catch (_) {}
+
+function localLights() { try { return JSON.parse(localStorage.getItem("lino-lights") || "[]"); } catch (_) { return []; } }
+async function saveLight(rec) {
+  if (sb) {
+    const { data, error } = await sb.from("lights").insert(rec).select("id").single();
+    if (error) throw error;
+    return data.id;
+  }
+  const row = { ...rec, id: "local-" + Date.now() }, all = localLights(); all.push(row);
+  try { localStorage.setItem("lino-lights", JSON.stringify(all.slice(-MAX_LIGHTS))); } catch (_) {}
+  return row.id;
+}
+function loadScript(src) { return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); }); }
+async function connectLights() {
+  if (CFG.url && CFG.anonKey) {
+    try {
+      await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js");
+      sb = window.supabase.createClient(CFG.url, CFG.anonKey, { auth: { persistSession: false } });
+      const { data, error } = await sb.from("lights").select("id,nx,ny,z,message,name").order("created_at", { ascending: true }).limit(MAX_LIGHTS);
+      if (error) throw error;
+      data.forEach(r => addLight(r, false));
+      sb.channel("lights").on("postgres_changes", { event: "INSERT", schema: "public", table: "lights" }, ({ new: r }) => {
+        const l = addLight(r, true);                       // someone, somewhere, just left one
+        if (l && l.message) setTimeout(() => { if (!composing) showNote(l, 8000); }, 1800);
+      }).subscribe();
+      return;
+    } catch (err) { console.warn("[lights] shared sky unavailable, keeping lights on this device", err); sb = null; }
+  }
+  localLights().forEach(r => addLight(r, false));
+}
+
+// ===================================================================== frame
+const t0 = performance.now();
+const now = () => (performance.now() - t0) / 1000;
+let last = 0, nebulaDirty = true, frameNo = 0;
+resize(); addEventListener("resize", resize);
+connectLights();
+const startIdx = Math.max(0, parseInt(location.hash.slice(1)) || 0);
+ensure(startIdx);
+let waitingFirst = true;
+
+function setRectU(prog, name, r) { gl.uniform4f(prog.u[name], r[0], r[1], r[2], r[3]); }
+function blitTo(rt) { gl.bindFramebuffer(gl.FRAMEBUFFER, rt ? rt.f : null); gl.viewport(0, 0, rt ? rt.w : canvas.width, rt ? rt.h : canvas.height); }
+function tri() { gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.TRIANGLES, 0, 3); }
+
+function frame() {
+  const t = now(), dt = Math.min(.1, t - last); last = t;
+  if (!paused) clock.t += dt;
+  frameNo++;
+
+  // ---- sequence
+  if (waitingFirst && ensure(startIdx)) {
+    waitingFirst = false; B = startIdx; phase = "trans"; phaseT0 = clock.t; startP = 0;
+    cam = { from: [0, 0, camD * 1.04], to: [0, 0, camD], t0: clock.t, dur: TRANS * 1.4 };
+  }
+  let p = 1;
+  if (B !== null) {
+    ensure(B + 1); ensure(B + 2);
+    if (phase === "trans") {
+      p = Math.min(1, startP + (clock.t - phaseT0) / TRANS);
+      if (p >= 1) beginHold();
+    }
+    if (phase === "hold") {
+      if (clock.t - phaseT0 > seq[B].hold && ensure(B + 1)) beginTransition(B + 1);
+    }
+    if (clock.t >= quoteDue) { quoteOn(seq[B].quote); quoteDue = Infinity; }
+    if (clock.t >= quoteEnd) quoteOff();
+    const keep = [B, B + 1, B + 2]; if (A !== null) keep.push(A);
+    if (frameNo % 60 === 0) evict(keep);
+  }
+  const sB = B !== null ? seq[B] : null;
+  const tgt = sB ? sB.tone.map(v => v / 255) : [.3, .3, .6];
+  const tm = Math.max(...tgt, .01);
+  for (let i = 0; i < 3; i++) tone[i] += (tgt[i] / tm * .5 - tone[i]) * (1 - Math.exp(-dt / 3));
+
+  // ---- camera
+  const par = reduceMotion ? 0 : 1;
+  smx += (mx - smx) * (1 - Math.exp(-dt / 1.4)); smy += (my - smy) * (1 - Math.exp(-dt / 1.4));
+  const base = sB ? camAt(clock.t) : [0, 0, camD];
+  eye = [base[0] + (smx * 26 + Math.sin(t * .11) * 12) * par, base[1] + (-smy * 18 + Math.cos(t * .09) * 8) * par, base[2]];
+  look = [base[0], base[1], 0];
+  const VP = mul(persp(FOV, W / H, 5, 30000), lookAt(eye, look, [Math.sin(t * .045) * .012 * par, 1, 0]));
+
+  // ---- nebula (half res, every other frame)
+  if (nebulaDirty || frameNo % 2 === 0) {
+    blitTo(rtNebula); gl.disable(gl.BLEND); gl.useProgram(P.nebula.p);
+    gl.uniform1f(P.nebula.u.uTime, t); gl.uniform1f(P.nebula.u.uAspect, W / H);
+    gl.uniform2f(P.nebula.u.uCam, eye[0] * 3, eye[1] * 3); gl.uniform3fv(P.nebula.u.uTone, tone);
+    tri(); nebulaDirty = false;
+  }
+
+  // ---- scene
+  blitTo(rtScene); gl.disable(gl.BLEND);
+  gl.useProgram(P.copy.p); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, rtNebula.t); gl.uniform1i(P.copy.u.uTex, 0); tri();
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  gl.useProgram(P.star.p);
+  gl.uniformMatrix4fv(P.star.u.uVP, false, VP); gl.uniform1f(P.star.u.uTime, t); gl.uniform1f(P.star.u.uDpr, dpr);
+  lastVP = VP; readLights(t);
+  const hv = reading && lights.includes(reading.light) ? lightWorld(reading.light) : [0, 0, 1e6];
+  gl.uniform4f(P.star.u.uHover, hv[0], hv[1], hv[2], reading ? reading.amount : 0);
+  gl.bindVertexArray(starVAO); gl.drawArrays(gl.POINTS, 0, starCount + Math.min(lights.length, MAX_LIGHTS));
+
+  if (!reduceMotion && t > nextMeteor && !meteor) {
+    const ang = (.08 + Math.random() * .16) * Math.PI, dir = Math.random() < .5 ? -1 : 1;
+    meteor = { x: (Math.random() - .5) * W * 1.2, y: H * (.2 + Math.random() * .35), vx: Math.cos(ang) * dir, vy: -Math.sin(ang), t0: t, life: 1.3 + Math.random() * .5 };
+  }
+  if (meteor) {
+    const age = (t - meteor.t0) / meteor.life;
+    if (age >= 1) { meteor = null; nextMeteor = t + 20 + Math.random() * 30; }
+    else {
+      const sp = 1100, z = -1100;
+      gl.useProgram(P.meteor.p); gl.uniformMatrix4fv(P.meteor.u.uVP, false, VP);
+      gl.uniform3f(P.meteor.u.uHead, meteor.x + meteor.vx * sp * age * meteor.life, meteor.y + meteor.vy * sp * age * meteor.life, z);
+      gl.uniform3f(P.meteor.u.uDir, meteor.vx, meteor.vy, 0); gl.uniform1f(P.meteor.u.uLen, 320 * Math.min(1, age * 4));
+      gl.uniform1f(P.meteor.u.uAlpha, Math.sin(age * Math.PI) * .8); gl.uniform1f(P.meteor.u.uDpr, dpr);
+      gl.bindVertexArray(emptyVAO); gl.drawArrays(gl.POINTS, 0, 64);
+    }
+  }
+
+  const tB = B !== null && texCache.get(B);
+  if (tB && tB.tex) {
+    const sA = A !== null ? seq[A] : null, tA = A !== null ? texCache.get(A) : null;
+    const hasA = !!(tA && tA.tex);
+    const rB = rectFor(sB), rA = hasA ? rectFor(sA) : rB;
+    gl.useProgram(P.plane.p);
+    gl.uniformMatrix4fv(P.plane.u.uVP, false, VP); gl.uniform1f(P.plane.u.uTime, t); gl.uniform1i(P.plane.u.uTex, 0);
+    gl.uniform1f(P.plane.u.uP, p); gl.uniform1f(P.plane.u.uWind, wind);
+    gl.bindVertexArray(emptyVAO); gl.activeTexture(gl.TEXTURE0);
+    if (p < 1 && hasA) {
+      gl.bindTexture(gl.TEXTURE_2D, tA.tex); setRectU(P.plane, "uRect", rA); gl.uniform1i(P.plane.u.uIncoming, 0);
+      gl.uniform1i(P.plane.u.uGrade, sA.text ? 0 : 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    gl.bindTexture(gl.TEXTURE_2D, tB.tex); setRectU(P.plane, "uRect", rB); gl.uniform1i(P.plane.u.uIncoming, 1);
+    gl.uniform1i(P.plane.u.uGrade, sB.text ? 0 : 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    const pr = P.dust;
+    gl.useProgram(pr.p);
+    gl.uniformMatrix4fv(pr.u.uVP, false, VP);
+    gl.uniform1f(pr.u.uTime, t); gl.uniform1f(pr.u.uP, p); gl.uniform1f(pr.u.uDpr, dpr); gl.uniform1f(pr.u.uFocal, camD);
+    gl.uniform1f(pr.u.uWind, wind);
+    gl.uniform1i(pr.u.uHasA, hasA ? 1 : 0);
+    gl.uniform1i(pr.u.uGradeA, hasA && !sA.text ? 1 : 0); gl.uniform1i(pr.u.uGradeB, sB.text ? 0 : 1);
+    gl.uniform2i(pr.u.uGrid, GRID[0], GRID[1]);
+    setRectU(pr, "uRectA", rA); setRectU(pr, "uRectB", rB);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, hasA ? tA.tex : tB.tex); gl.uniform1i(pr.u.uTexA, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, tB.tex); gl.uniform1i(pr.u.uTexB, 1);
+    gl.uniform1f(pr.u.uLodA, Math.max(0, Math.log2((hasA ? tA.w : tB.w) / GRID[0])));
+    gl.uniform1f(pr.u.uLodB, Math.max(0, Math.log2(tB.w / GRID[0])));
+    gl.drawArrays(gl.POINTS, 0, N);
+    gl.activeTexture(gl.TEXTURE0);
+  }
+
+  // ---- bloom
+  gl.disable(gl.BLEND);
+  blitTo(bloom[0]); gl.useProgram(P.bright.p); gl.bindTexture(gl.TEXTURE_2D, rtScene.t); gl.uniform1i(P.bright.u.uTex, 0); gl.uniform1f(P.bright.u.uThr, HDR ? .9 : .78); tri();
+  gl.useProgram(P.down.p); gl.uniform1i(P.down.u.uTex, 0);
+  for (let i = 1; i < bloom.length; i++) {
+    blitTo(bloom[i]); gl.bindTexture(gl.TEXTURE_2D, bloom[i - 1].t);
+    gl.uniform2f(P.down.u.uTexel, 1 / bloom[i - 1].w, 1 / bloom[i - 1].h); tri();
+  }
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+  gl.useProgram(P.up.p); gl.uniform1i(P.up.u.uTex, 0);
+  for (let i = bloom.length - 1; i > 0; i--) {
+    blitTo(bloom[i - 1]); gl.bindTexture(gl.TEXTURE_2D, bloom[i].t);
+    gl.uniform2f(P.up.u.uTexel, 1 / bloom[i].w, 1 / bloom[i].h); tri();
+  }
+  gl.disable(gl.BLEND);
+
+  // ---- final
+  blitTo(null); gl.useProgram(P.final.p);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, rtScene.t); gl.uniform1i(P.final.u.uScene, 0);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, bloom[0].t); gl.uniform1i(P.final.u.uBloom, 1);
+  gl.uniform1f(P.final.u.uTime, t); gl.uniform1f(P.final.u.uAspect, W / H);
+  gl.uniform1f(P.final.u.uFade, Math.min(1, t / 3.5)); gl.uniform1f(P.final.u.uBloomK, .42);
+  tri(); gl.activeTexture(gl.TEXTURE0);
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

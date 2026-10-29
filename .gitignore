@@ -1,0 +1,14 @@
+# private: original photos still carry camera metadata (incl. GPS); the web build re-encodes them without it
+/photos/
+/REVIEW - *.jpg
+/UPSCALE TEST/
+
+# heavy or regenerated
+/output/
+/build/cache/
+/build/tools/
+/build/upscaled*/
+*.wav
+.venv/
+__pycache__/
+.DS_Store

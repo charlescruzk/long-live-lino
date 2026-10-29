@@ -1,0 +1,91 @@
+# LONG LIVE LINO: one line per photo
+#
+#   photo | confidence | line
+#
+# Only lines at or above "quote_min" in build/config.json (0.80) appear on screen.
+# Confidence = how sure the line fits what the photo shows, with no guessed facts
+# about Lino or the people with him. Lower a number to hide a line, raise it to show one,
+# or rewrite the line. Leave the line empty for no quote. Then run build/web.py.
+
+015         | 0.86 | It all started here, with that same grin.
+005         | 0.82 | That look already said, "just watch me."
+006         | 0.84 | Little suit, big heart.
+049_d6661a  | 0.60 | Summer rivers, and everyone we came from.
+033         | 0.80 | The ones who were there from the start.
+032         | 0.55 |
+044         | 0.62 | Packed in close, like always.
+045         | 0.85 | Crowded rooms, full hearts.
+027         | 0.80 | Every couch became the best seat in the house.
+034         | 0.88 | Never too cool to be ridiculous.
+036         | 0.55 |
+037         | 0.82 | All dressed up, and still ourselves.
+039         | 0.80 | One night in our finest, remembered forever.
+040         | 0.85 | Some nights glow forever.
+028         | 0.82 | Formal wear could never keep us serious.
+043         | 0.78 | Christmas lights, and the people who made them brighter.
+046         | 0.84 | Every step, together.
+029         | 0.60 |
+042         | 0.30 |
+035         | 0.30 |
+026         | 0.85 | Up high, with the whole world behind us.
+038         | 0.83 | On top of the world, right where you belonged.
+047         | 0.87 | The best part of every trip was the ride there.
+085         | 0.70 | Laughing so hard it had to be hidden.
+081         | 0.40 |
+090         | 0.30 |
+091         | 0.30 |
+077         | 0.40 |
+076         | 0.30 |
+065         | 0.82 | Loud, happy, and all together.
+066         | 0.55 |
+067         | 0.72 | Close enough to feel the warmth.
+069         | 0.65 |
+068         | 0.88 | A room full of people who loved you.
+019         | 0.78 | Dressed sharp for a night to remember.
+025         | 0.80 | Brothers in every way that mattered.
+024         | 0.84 | Lost in the crowd, never lost to each other.
+023         | 0.86 | In a forest of streetlights, you still stood out.
+082         | 0.88 | Some lights never go out.
+052         | 0.86 | Some songs will always sound like you.
+054         | 0.88 | Lying in the clover, smiling up at the sky.
+001         | 0.86 | Small beside the old trees, never small to us.
+051         | 0.84 | Some moments rush by. This one stayed.
+050         | 0.88 | A quiet shore and a loyal friend.
+075         | 0.85 | Barefoot, sea air, and good company.
+074         | 0.85 | Grounded, even under a heavy sky.
+018         | 0.82 | Keep walking into the sun.
+003         | 0.90 | Every day, we wish you were here.
+004         | 0.86 | Standing with the giants.
+063         | 0.84 | Even through the masks, you could see the smiles.
+016         | 0.80 | Quiet water, golden light, still together.
+007         | 0.84 | Golden hour, with everything that mattered.
+079         | 0.86 | Holding on to what we love.
+021         | 0.86 | Always pointing toward the next view.
+008         | 0.80 | The ocean behind, the good stuff right in front.
+010         | 0.70 |
+061         | 0.82 | Every trail is better with a dog in your arms.
+060         | 0.85 | Every sunset still feels like you.
+011         | 0.80 | Under green giants, on a path all your own.
+012         | 0.84 | Crowned for a night, a king for always.
+083         | 0.85 | Royalty, every last one of us.
+087_a76f18  | 0.90 | Long live the king.
+062         | 0.84 | The whole road ahead, all to yourself.
+064         | 0.80 | Sun out, hat on, nowhere else to be.
+070         | 0.86 | The treasure was never the point. The people were.
+071         | 0.82 | Every road trip needs a throne.
+078         | 0.80 | At home among the red rocks.
+072         | 0.80 | The kind of day you only get with friends.
+013         | 0.88 | Still watching over us from up high.
+014         | 0.84 | Cheers to the good days.
+084         | 0.60 |
+088         | 0.86 | Full tables and fuller hearts.
+089         | 0.84 | Every gathering felt better with you in it.
+056_953d5e  | 0.65 |
+059         | 0.85 | Some joys never grow up.
+055_cd2499  | 0.86 | Look how many hearts you filled.
+055_3d70f5  | 0.86 | This is what a full life looks like.
+058         | 0.86 | The friends who became family.
+057         | 0.82 | Same crew, still together.
+086         | 0.86 | Gentle hands, even when the world was loud.
+053         | 0.80 | Sunlight, and someone beside you.
+080         | 0.88 | This is how we'll always remember you.

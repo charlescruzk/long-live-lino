@@ -1,0 +1,116 @@
+# LONG LIVE LINO: photo order (oldest first)
+#
+# HOW TO EDIT
+#   Move lines up or down to change the order.
+#   Put a "-" at the start of a line to leave that photo out. Remove the "-" to bring it back.
+#   A line starting with "+" sits side by side with the line above it in the 16:9 version.
+#   ("+" pairs are shown one after the other in the 9:16 version.)
+#   "== ..." lines are chapters. Each chapter starts where the song changes section.
+#   Add "| slow" after a chapter name to give its photos more time.
+#   Add "hold" at the end of a photo line to give that one photo extra time.
+#   focus: which face is Lino (numbers on the REVIEW sheet), or x,y (0 to 1), or c = centre of photo.
+#
+# NEW PHOTOS land in a "NEW" chapter at the bottom until they are placed.
+#
+
+== Childhood | slow
+  015 | 20261010_183535.jpeg                                       | focus=0        | baby & kid photos collage
+  005 | 20200905_221206.jpeg                                       | focus=0        | about 7
+  006 | 20200905_221219.jpeg                                       | focus=0        | about 9, in a suit
+  049 | E444577C-5634-4E9F-8EE0-E5EBDD5EA7C2.jpeg                  | focus=c crop=.02,.02,.985,.965        | old family river photo (is Lino in this one?)
+
+== Growing up (2000s)
+  033 | att.DpC8EtYKYEWt-ImJTBq5g9pszT4Ebo75FGXkJda7QT0.jpeg       | focus=0
+  032 | att.DG_O0ridzNJPC6g3tD8OUkzAP-T9K-9U0SGA_ztSqW4.jpeg       | focus=2
+  044 | att.RIoqc8Mw-tcO2bghaDECd49XYMPuce44Kq1z3r5UG9A.jpeg       | focus=c        | ? which one is Lino
+  045 | att.xnd325PvEHqJKm0xtECrxAU2uDtD0cZbtA_tPG3fzJ4.jpeg       | focus=c        | ? which one is Lino
+  027 | att.3tvL2LVdE7VI3rXTZDbMjyZdD5J5nc4WODS048mCBzA.jpeg       | focus=c        | ? which one is Lino
+  034 | att.Fetb2pFsespXx41Vg6-8hrEAWnOQPlo3qKOg-9EYWps.jpeg       | focus=0        | face-in-hole board
++ 036 | att.iGPYIDd3PCFVg20jVS_--AE-EUX8JBYn281ueH0T724.jpeg       | focus=1
+  037 | att.jAt_hfNnj0FHS-dciIuwVVjdajDllLQ2T4VdyrhKNW0.jpeg       | focus=1
+  039 | att.l-olmpGAa-wVMSMtAgXldUbuZF0MXhuKUg2cL87JAI0.jpeg       | focus=2        | formal night
+  040 | att.l7CNHJAF7Vb8QMzUiGgCvN-aVkVtwHMbvZZPdzqhaJs.jpeg       | focus=1
+  028 | att.493ad3A36-8DokRFFAJiGtzzjM3IsHBhAuwYge1cz18.jpeg       | focus=2
+  043 | att.Q0gnTYVROWqkxmO0RAkgSBc18lvHyrbzYV2tm636ZjE.jpeg       | focus=0
+  046 | att.zNscEg3BBRMw8raHw5tZhFpXYyEqu2wjD_hWofI4Byo.jpeg       | focus=6
+  029 | att.9pY0QIjYo_NGgbBZy1C1qED6avHECyVh8QIWpZAb6Zw.jpeg       | focus=2
+  042 | att.PHJyJcOoQb-tMk5wjTnP179leiAA2wgaPULtXAMSmuE.jpeg       | focus=0
+  035 | att.Giw9kZNFG4u5FHLQrVVkpqvSniza4wDZjs8-iFrRFsk.jpeg       | focus=0
+  026 | att.2MYMnmijplQGyIJv1O894fRiFaErybEjgVmSymImGJc.jpeg       | focus=0        | Taal lake view
+  038 | att.kVasEOgMB1GWmOD70ad8enT9TlunkPcM0DenWqkAzEQ.jpeg       | focus=0
+  047 | att.zVC26TyoXKADODhG84OegHOv-F-KsKWD4XG1efcvhcQ.jpeg       | focus=0        | car ride
+- 030 | att.BF-pH1BSwDO0CgBbspbCHDneM8tv8SdFWHS4BSMY6OE.jpeg       | focus=2        | near-duplicate of 028
+- 031 | att.d1oQF5AjxwIWFkJpfb247QHcVbgqZDN_YVW1LkfFjsM.jpeg       | focus=0        | near-duplicate of 035
+- 041 | att.o0zCkuviVrcQXiflI9X59NhiDTfoEOejn6_H-da0Pzo.jpeg       | focus=2        | too small (200 px)
+
+== The 2010s
+  085 | Snapchat-497158925.jpeg                                    | focus=0
++ 081 | Screenshot 2026-10-26 at 12.02.00 PM.png                   | focus=2        | ? which one is Lino
+  090 | BATCH2/IMG_0448.png                                        | focus=c         | ? same bar as 081, which one is Lino
+  091 | BATCH2/IMG_5387.png                                        | focus=1         | ? same bar as 081, which one is Lino
+  077 | IMG_4652.png                                               | focus=.36,.2
+  076 | IMG_4651.png                                               | focus=2
+  065 | IMG_3137.jpeg                                              | focus=5
+  066 | IMG_3138.jpeg                                              | focus=1
++ 067 | IMG_3139.jpeg                                              | focus=1
+  069 | IMG_3141.jpeg                                              | focus=0
+  068 | IMG_3140.jpeg                                              | focus=c        | ? which one is Lino
+  019 | 542033973.heic                                             | focus=0
+  025 | A1C5D6FD-6DBB-4620-8995-0D1903595709.jpeg                  | focus=1
+  024 | 91DCAEB6-A2F6-4B0C-A4C0-00613851B21D.jpeg                  | focus=2
+  023 | 911456420.jpeg                                             | focus=0        | LACMA lights
++ 082 | Screenshot_20210823-115104_Gallery.jpeg                    | focus=0        | LACMA lights
+  052 | image000000(1).gif                                         | focus=0
+  054 | IMG_0153.heic                                              | focus=0
+  001 | 1000004779.jpeg                                            | focus=0
+  051 | F8FE5ADA-FA87-4B68-A44F-96697487FDDB.jpeg                  | focus=0        | waterfall
+  050 | EC07A552-793A-4D36-80A4-258984F5B8FD.jpeg                  | focus=0
+  075 | IMG_3351.jpeg                                              | focus=0        | beach with the dog
+  074 | IMG_3350.jpeg                                              | focus=0
+  018 | 3A8A806F-7629-4EC0-90B6-69C44110B1A0.heic                  | focus=0
+  003 | 20191030_190245.jpeg                                       | focus=0        | Oct 2019
+- 002 | 190FC5B8-084A-4BC2-9162-FCBA8C948D44_2a9bbf8d-f6d3-4dd8-84 | focus=0        | same beach as 050 / 075
+- 017 | 2EC275DC-8771-4978-89D4-9B3F72B8D895.jpeg                  | focus=2        | near-duplicate of 025
+- 022 | 83C375F0-7B14-4894-9B17-200236E0CB3E.jpeg                  | focus=1        | near-duplicate of 025
+
+== 2020 to 2023
+  004 | 20200713_154410.jpeg                                       | focus=.56,.62  | Jul 2020
+  063 | IMG_2062.jpeg                                              | focus=0
++ 016 | 222E3431-52CD-4D01-B9A9-100DD0405A90.heic                  | focus=0
+  007 | 20200915_131903.jpeg                                       | focus=0        | Sep 2020
++ 079 | ISIMG-699783.jpeg                                          | focus=0
+  021 | 7E54BEBF-1126-4791-8B4D-439328A9C71A.jpeg                  | focus=c
+  008 | 20210918_135329.jpeg                                       | focus=1        | Sep 2021
+  010 | 20211020_135454.jpeg                                       | focus=1        | Oct 2021
+  061 | IMG_20261008_224531.heic                                   | focus=0
++ 060 | IMG_20261008_224418.heic                                   | focus=1
+  011 | 20220721_173807.jpeg                                       | focus=0        | Jul 2022
+  012 | 20220731_152550.jpeg                                       | focus=1        | Jul 2022
++ 083 | Screenshot_20220801-140804_Instagram.jpeg                  | focus=0        | Aug 2022
+  087 | BATCH2/28859135848ee993431b3b99001de562.jpeg               | focus=4 crop=.19,.20,.925,.905 | Medieval Times print, Jul 31 2022
+  062 | IMG_20261010_231633.heic                                   | focus=0
+  064 | IMG_2667.heic                                              | focus=0
+  070 | IMG_3346.jpeg                                              | focus=1
+  071 | IMG_3347.jpeg                                              | focus=2        | Deadwood
+  078 | IMG_8035.heic                                              | focus=0        | red rocks
+  072 | IMG_3348.jpeg                                              | focus=0
+  013 | 20230628_104053.jpeg                                       | focus=.53,.44  | Jun 2023
++ 014 | 20230628_124146.jpeg                                       | focus=.62,.22  | Jun 2023
+  084 | Screenshot_20231105-013110_Instagram.jpeg                  | focus=0        | Nov 2023
+- 009 | 20211020_135323.jpeg                                       | focus=c        | he's very small in this one
+- 073 | IMG_3349.jpeg                                              | focus=c        | he's very small in this one
+
+== Recent years
+  088 | BATCH2/2f3ec0481fe90160a3906e76a9409ad1.jpeg               | focus=5         | buffet dinner
+  089 | BATCH2/98bd49ab85c7c7fff83af6e3f391fc3e.jpeg               | focus=4         | night market
+  056 | IMG_0243.png                                               | focus=0 crop=0,.04,1,1
++ 059 | IMG_1368.heic                                              | focus=0
+  055 | IMG_0242.png                                               | focus=c crop=0,.03,1,.495 | family day (top photo)
++ 055 | IMG_0242.png                                               | focus=c crop=0,.565,1,.985 | family day (bottom photo)
+  058 | IMG_1197.jpeg                                              | focus=0
+  057 | IMG_1165.jpeg                                              | focus=5
+  086 | View rece.jpeg                                             | focus=1
+  053 | IMG-20260610-WA0007.jpeg                                   | focus=1
+  080 | Screenshot 2025-10-01 at 10.44.13 PM.jpeg                  | focus=0        | final portrait
+- 020 | 7a96ad844e73476bbcc7fa82f1703009.mov                       | focus=c        | video clip (not used yet)
+- 048 | cff8d7d7e2474402ae74b0c0fc3b5190.mov                       | focus=c        | video clip (not used yet)
