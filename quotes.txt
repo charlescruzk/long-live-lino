@@ -34,6 +34,11 @@
 081         | 0.40 |
 090         | 0.30 |
 091         | 0.30 |
+092         | 0.82 | Late nights, and everyone who mattered.
+094         | 0.86 | Grown men in onesies, and not one regret.
+095         | 0.83 | One more round, one more laugh.
+093         | 0.85 | Above it all, with the whole crew.
+096_4f60f3  | 0.80 | Summer, sunglasses, and nowhere else to be.
 077         | 0.40 |
 076         | 0.30 |
 065         | 0.82 | Loud, happy, and all together.
@@ -54,8 +59,11 @@
 075         | 0.85 | Barefoot, sea air, and good company.
 074         | 0.85 | Grounded, even under a heavy sky.
 018         | 0.82 | Keep walking into the sun.
+097         | 0.86 | Suited up and raising a glass.
+099_446337  | 0.82 | All the brothers, one frame.
 003         | 0.90 | Every day, we wish you were here.
 004         | 0.86 | Standing with the giants.
+098         | 0.85 | Rest easy, brother.
 063         | 0.84 | Even through the masks, you could see the smiles.
 016         | 0.80 | Quiet water, golden light, still together.
 007         | 0.84 | Golden hour, with everything that mattered.

@@ -1,6 +1,6 @@
 """Normalize new files in photos/ into build/cache/*.jpg and detect faces (Apple Vision).
 Incremental: files already in build/manifest.json are skipped."""
-import json, os, subprocess, sys
+import hashlib, json, os, subprocess, sys
 from pathlib import Path
 from PIL import Image, ImageOps
 import pillow_heif
@@ -31,12 +31,19 @@ manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {"items": 
 items = manifest["items"]
 next_id = max([int(v["id"]) for v in items.values()] + [0]) + 1
 added = []
+md5 = lambda f: hashlib.md5(f.read_bytes()).hexdigest()
+# byte-identical copies ("IMG_0448 2.png", a re-sent photo in a BATCH folder) are skipped
+known = {md5(PHOTOS / k) for k in items if (PHOTOS / k).exists()}
 # subfolders (BATCH2, BATCH3, ...) are included; keys are paths relative to photos/
 for f in sorted(PHOTOS.rglob("*"), key=lambda p: str(p.relative_to(PHOTOS)).lower()):
     ext, key = f.suffix.lower(), str(f.relative_to(PHOTOS))
     if not f.is_file() or any(part.startswith(".") for part in f.relative_to(PHOTOS).parts) \
             or key in items or ext not in IMAGE | VIDEO:
         continue
+    if (h := md5(f)) in known:
+        print(f"skip  duplicate  {key}")
+        continue
+    known.add(h)
     pid = f"{next_id:03d}"; next_id += 1
     out = CACHE / f"{pid}.jpg"
     entry = dict(id=pid, file=key, kind="video" if ext in VIDEO else "photo")

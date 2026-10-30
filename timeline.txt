@@ -48,6 +48,11 @@
 + 081 | Screenshot 2026-10-26 at 12.02.00 PM.png                   | focus=2        | ? which one is Lino
   090 | BATCH2/IMG_0448.png                                        | focus=c         | ? same bar as 081, which one is Lino
   091 | BATCH2/IMG_5387.png                                        | focus=1         | ? same bar as 081, which one is Lino
+  092 | BATCH2/IMG_2248.png                                        | focus=7        | tent party (Lino = red shirt?)
+  094 | BATCH2/IMG_2250.png                                        | focus=8        | onesie party, same tent (Lino = back row?)
+  095 | BATCH2/IMG_2251.png                                        | focus=1        | izakaya night
+  093 | BATCH2/IMG_2249.png                                        | focus=2        | hilltop hike with the dog
+  096 | BATCH2/IMG_2252.png                                        | focus=2 crop=.08,.068,.912,.946 | ? festival, Lino = drinking (2) or goatee (3)
   077 | IMG_4652.png                                               | focus=.36,.2
   076 | IMG_4651.png                                               | focus=2
   065 | IMG_3137.jpeg                                              | focus=5
@@ -68,6 +73,8 @@
   075 | IMG_3351.jpeg                                              | focus=0        | beach with the dog
   074 | IMG_3350.jpeg                                              | focus=0
   018 | 3A8A806F-7629-4EC0-90B6-69C44110B1A0.heic                  | focus=0
+  097 | BATCH2/IMG_3359.jpeg                                       | focus=0        | wedding, black tie
+  099 | BATCH2/IMG_3440.jpeg                                       | focus=0 crop=0,.006,1,1 | Christmas birthday crew
   003 | 20191030_190245.jpeg                                       | focus=0        | Oct 2019
 - 002 | 190FC5B8-084A-4BC2-9162-FCBA8C948D44_2a9bbf8d-f6d3-4dd8-84 | focus=0        | same beach as 050 / 075
 - 017 | 2EC275DC-8771-4978-89D4-9B3F72B8D895.jpeg                  | focus=2        | near-duplicate of 025
@@ -75,6 +82,7 @@
 
 == 2020 to 2023
   004 | 20200713_154410.jpeg                                       | focus=.56,.62  | Jul 2020
+  098 | BATCH2/IMG_3360.jpeg                                       | focus=1        | asleep at the table (date unknown)
   063 | IMG_2062.jpeg                                              | focus=0
 + 016 | 222E3431-52CD-4D01-B9A9-100DD0405A90.heic                  | focus=0
   007 | 20200915_131903.jpeg                                       | focus=0        | Sep 2020
