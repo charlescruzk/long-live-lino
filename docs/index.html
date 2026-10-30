@@ -774,12 +774,13 @@ function frame() {
   let p = 1;
   if (B !== null) {
     ensure(B + 1); ensure(B + 2);
+    // end the hold first, so a transition starting this frame is drawn at p = 0, not as one finished frame of the next photo
+    if (phase === "hold") {
+      if (clock.t - phaseT0 > seq[B].hold && ensure(B + 1)) beginTransition(B + 1);
+    }
     if (phase === "trans") {
       p = Math.min(1, startP + (clock.t - phaseT0) / TRANS);
       if (p >= 1) beginHold();
-    }
-    if (phase === "hold") {
-      if (clock.t - phaseT0 > seq[B].hold && ensure(B + 1)) beginTransition(B + 1);
     }
     if (clock.t >= quoteDue) { quoteOn(seq[B].quote); quoteDue = Infinity; }
     if (clock.t >= quoteEnd) quoteOff();
