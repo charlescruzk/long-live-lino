@@ -3,14 +3,17 @@
 # HOW TO EDIT
 #   Move lines up or down to change the order.
 #   Put a "-" at the start of a line to leave that photo out. Remove the "-" to bring it back.
-#   A line starting with "+" sits side by side with the line above it in the 16:9 version.
-#   ("+" pairs are shown one after the other in the 9:16 version.)
-#   "== ..." lines are chapters. Each chapter starts where the song changes section.
-#   Add "| slow" after a chapter name to give its photos more time.
+#   A line starting with "+" sits next to the line above it (in the slideshow they play one after the other).
+#   "== ..." lines are chapters. Add "| slow" after a chapter name to give its photos more time.
 #   Add "hold" at the end of a photo line to give that one photo extra time.
 #   focus: which face is Lino (numbers on the REVIEW sheet), or x,y (0 to 1), or c = centre of photo.
+#     The slow drift moves toward this point.
+#   crop=x0,y0,x1,y1 (0 to 1) cuts a photo out of a screenshot.
+#   Clips (videos and GIFs) play muted, up to 9 s from the middle. clip=START,LENGTH (seconds) picks the part.
+#   Notes starting with "?" are guesses (which face is Lino, or the date). Please check those.
 #
 # NEW PHOTOS land in a "NEW" chapter at the bottom until they are placed.
+# After editing: .venv/bin/python build/slideshow.py
 #
 
 == Childhood | slow
@@ -18,6 +21,8 @@
   005 | 20200905_221206.jpeg                                       | focus=0        | about 7
   006 | 20200905_221219.jpeg                                       | focus=0        | about 9, in a suit
   049 | E444577C-5634-4E9F-8EE0-E5EBDD5EA7C2.jpeg                  | focus=c crop=.02,.02,.985,.965        | old family river photo (is Lino in this one?)
+  252 | IMG_20261113_123231.jpg                                    | focus=c        | ? childhood print, which one is Lino
+  260 | Screenshot_20261012_104327_Instagram.jpg                   | focus=0        | heart sunglasses
 
 == Growing up (2000s)
   033 | att.DpC8EtYKYEWt-ImJTBq5g9pszT4Ebo75FGXkJda7QT0.jpeg       | focus=0
@@ -39,6 +44,16 @@
   026 | att.2MYMnmijplQGyIJv1O894fRiFaErybEjgVmSymImGJc.jpeg       | focus=0        | Taal lake view
   038 | att.kVasEOgMB1GWmOD70ad8enT9TlunkPcM0DenWqkAzEQ.jpeg       | focus=0
   047 | att.zVC26TyoXKADODhG84OegHOv-F-KsKWD4XG1efcvhcQ.jpeg       | focus=0        | car ride
+  145 | IMG_1935(1).png                                            | focus=0 crop=0,.16,1,.84 | Facebook photo, Oct 2009
+  115 | 20261010_180616(1).jpg                                     | focus=0        | ? graduation day, Lino taken as the tall young man
+  152 | IMG_20261011_234111(1).png                                 | focus=0        | long hair, Obey tee
+  198 | IMG_20261103_234024.jpg                                    | focus=0        | old print, on the car
+  199 | IMG_20261103_234049.jpg                                    | focus=c        | ? old print, guitar on the beach at night
+  200 | IMG_20261103_234053.jpg                                    | focus=c        | ? old print, beach at night
+  210 | IMG_20261109_122413.jpg                                    | focus=1        | ? old print, two teenagers, Lino taken as the one on the right
+  221 | IMG_20261110_130731(1).png                                 | focus=1 crop=0,.235,1,.77 | ? old photo (screenshot), Lino taken as the young man in the vest
+  230 | IMG_20261110_130840(1).png                                 | focus=2        | ? dressed up, Lino taken as the young man in the suit
+  266 | Screenshot_20261110_172227_Gallery.jpg                     | focus=1        | ? old print, snow trip, Lino taken as the one in the middle
 - 030 | att.BF-pH1BSwDO0CgBbspbCHDneM8tv8SdFWHS4BSMY6OE.jpeg       | focus=2        | near-duplicate of 028
 - 031 | att.d1oQF5AjxwIWFkJpfb247QHcVbgqZDN_YVW1LkfFjsM.jpeg       | focus=0        | near-duplicate of 035
 - 041 | att.o0zCkuviVrcQXiflI9X59NhiDTfoEOejn6_H-da0Pzo.jpeg       | focus=2        | too small (200 px)
@@ -75,7 +90,48 @@
   018 | 3A8A806F-7629-4EC0-90B6-69C44110B1A0.heic                  | focus=0
   097 | BATCH2/IMG_3359.jpeg                                       | focus=0        | wedding, black tie
   099 | BATCH2/IMG_3440.jpeg                                       | focus=0 crop=0,.006,1,1 | Christmas birthday crew
+  249 | IMG_20261110_131015(1).jpg                                 | focus=0        | with the puppy, Apr 2016
+  254 | IMG_20261113_123529.jpg                                    | focus=0        | with the puppy (same time as Apr 2016?)
+  248 | IMG_20261110_131012(1).jpg                                 | focus=c        | ? Ferris wheel, Apr 2017, which one is Lino
+  283 | Snapchat-516638013.jpg                                     | focus=c        | Joshua Tree (same day as the Nov 2017 clip?)
+  284 | Snapchat-590085743.mp4                                     | focus=0        | clip: Joshua Tree, Nov 2017
+  232 | IMG_20261110_130846(1).jpg                                 | focus=0        | ? wedding, Feb 2018, Lino taken as the man on the left
+  242 | IMG_20261110_130936(1).jpg                                 | focus=c        | wedding group, Feb 2018
+  244 | IMG_20261110_130954(1).jpg                                 | focus=c        | wedding, Feb 2018
+  241 | IMG_20261110_130927(1).heic                                | focus=1        | ? on the couch, Nov 2018, Lino taken as the man in the middle
+  235 | IMG_20261110_130858(1).jpg                                 | focus=1        | ? wedding, Apr 2019, Lino taken as the man in the dark suit
+  208 | IMG_20261109_122355.heic                                   | focus=0        | with the husky, May 2019
+  100 | 1137138209.jpg                                             | focus=c        | ? dinner, Oct 2019, which one is Lino (cap or white tee)
+  207 | IMG_20261109_122350.jpg                                    | focus=0        | Jenga, Oct 2019
+  209 | IMG_20261109_122404.gif                                    | focus=0        | clip (GIF), Oct 2019
+  211 | IMG_20261109_122844.gif                                    | focus=c        | ? dinner, Oct 2019, which one is Lino (GIF clip)
+  103 | 188717781.heic                                             | focus=0        | mirror selfie in suits, Oct 2019
   003 | 20191030_190245.jpeg                                       | focus=0        | Oct 2019
+  119 | FB_IMG_1792814013715.jpg                                   | focus=0        | San Diego
+  195 | IMG_20261103_233942.jpg                                    | focus=0        | white shirt and beanie
+  196 | IMG_20261103_233952.jpg                                    | focus=0        | white shirt and beanie
+  212 | IMG_20261110_130615(1).png                                 | focus=c        | ? night out, which one is Lino
+  213 | IMG_20261110_130621.png                                    | focus=1        | ? family photo, Lino taken as the young man at the back
+  214 | IMG_20261110_130627.png                                    | focus=c        | ? patio at night, which one is Lino
+  233 | IMG_20261110_130850.png                                    | focus=c        | ? bar night, which one is Lino
+  234 | IMG_20261110_130855(1).jpg                                 | focus=2        | ? black and white with the dog
+  240 | IMG_20261110_130925(1).jpg                                 | focus=c        | ? costume party, which one is Lino
+  245 | IMG_20261110_130956(1).jpg                                 | focus=c        | ? festival friends, which one is Lino
+  253 | IMG_20261113_123251.jpg                                    | focus=0        | ? wedding, Lino taken as the man on the left
+  268 | Snapchat-1054984933.jpg                                    | focus=c        | LA cap at dusk
+  269 | Snapchat-1243714225(1).mp4                                 | focus=c        | clip: desert with the dog
+  270 | Snapchat-1248406872.jpg                                    | focus=0        | pizza night
+  271 | Snapchat-1495826763.jpg                                    | focus=0        | Koreatown
+  272 | Snapchat-1507536518.jpg                                    | focus=1        | snow selfie
+  273 | Snapchat-1576752440.jpg                                    | focus=0        | neon sign
+  274 | Snapchat-1780810686.jpg                                    | focus=1        | dressed up
+  277 | Snapchat-239779596.jpg                                     | focus=1        | car selfie
+  278 | Snapchat-271341065.mp4                                     | focus=1        | clip: Halloween makeup
+  279 | Snapchat-362143108.jpg                                     | focus=c        | photobooth strips
+  280 | Snapchat-41214337.jpg                                      | focus=0        | Urban Light at LACMA
+  281 | Snapchat-514675880.jpg                                     | focus=0        | selfie
+  286 | Snapchat-918063748(1).mp4                                  | focus=c        | clip: sun through the trees
+  291 | VID_20261031_082546_335(1).mp4                             | focus=0        | clip: Halloween face paint
 - 002 | 190FC5B8-084A-4BC2-9162-FCBA8C948D44_2a9bbf8d-f6d3-4dd8-84 | focus=0        | same beach as 050 / 075
 - 017 | 2EC275DC-8771-4978-89D4-9B3F72B8D895.jpeg                  | focus=2        | near-duplicate of 025
 - 022 | 83C375F0-7B14-4894-9B17-200236E0CB3E.jpeg                  | focus=1        | near-duplicate of 025
@@ -88,11 +144,44 @@
   007 | 20200915_131903.jpeg                                       | focus=0        | Sep 2020
 + 079 | ISIMG-699783.jpeg                                          | focus=0
   021 | 7E54BEBF-1126-4791-8B4D-439328A9C71A.jpeg                  | focus=c
+  231 | IMG_20261110_130843(1).heic                                | focus=0        | with the puppy, Oct 2020
+  275 | Snapchat-1807877790.jpg                                    | focus=1        | Cluck & Blaze (masks, so 2020 or 2021?)
+  105 | 20210813_190605.jpg                                        | focus=0        | Pasadena, Aug 2021
   008 | 20210918_135329.jpeg                                       | focus=1        | Sep 2021
   010 | 20211020_135454.jpeg                                       | focus=1        | Oct 2021
   061 | IMG_20261008_224531.heic                                   | focus=0
 + 060 | IMG_20261008_224418.heic                                   | focus=1
+  227 | IMG_20261110_130804(1).heic                                | focus=1        | ? baby shower, Oct 2021
+  228 | IMG_20261110_130826(1).heic                                | focus=1        | baby shower, Oct 2021
+  276 | Snapchat-1952286568.mp4                                    | focus=0        | clip: dinner in a suit, Nov 2021
+  106 | 20211121_132711.jpg                                        | focus=c        | photobooth print, Nov 2021
+  107 | 20211124_164154.jpg                                        | focus=c        | lake at sunset, Nov 2021
+  163 | IMG_20261031_170256(1).heic                                | focus=0        | with the dog, Nov 2021
+  108 | 20211127_145310.jpg                                        | focus=0        | Christmas tree, Nov 2021
+  246 | IMG_20261110_131001(1).heic                                | focus=c        | ? big party, Dec 2021, which one is Lino
+  251 | IMG_20261112_175854.heic                                   | focus=0        | baby shower, Jan 2022
+  147 | IMG_20261008_164406.heic                                   | focus=5        | dinner, Feb 2022
+  162 | IMG_20261031_170254(1).heic                                | focus=0        | Feb 2022
+  154 | IMG_20261031_170155.heic                                   | focus=0        | presents, Feb 2022
+  122 | IMG-20220219-WA0008.jpg                                    | focus=1        | Feb 2022
+  157 | IMG_20261031_170239(1).heic                                | focus=1        | Mar 2022
+  158 | IMG_20261031_170242(1).heic                                | focus=1        | Mar 2022
+  159 | IMG_20261031_170244(1).jpg                                 | focus=1        | Mar 2022
+  109 | 20220329_190250.jpg                                        | focus=0        | Mar 2022
+  110 | 20220329_190302.jpg                                        | focus=0        | Mar 2022
+  111 | 20220329_190329.jpg                                        | focus=0        | Mar 2022
+  160 | IMG_20261031_170249(1).heic                                | focus=0        | Apr 2022
+  161 | IMG_20261031_170251(1).heic                                | focus=c        | Apr 2022
+  123 | IMG-20220606-WA0001.jpg                                    | focus=0        | wedding, Jun 2022
+  239 | IMG_20261110_130923(1).jpg                                 | focus=1        | with the baby, Jun 2022
+  226 | IMG_20261110_130750(1).heic                                | focus=1        | with the baby, Jun 2022
+  112 | 20220719_183109.jpg                                        | focus=0        | Jul 2022
+  165 | IMG_20261031_170340(1).jpg                                 | focus=0        | beach, Jul 2022
+  166 | IMG_20261031_170344(1).jpg                                 | focus=0        | beach with the dog, Jul 2022
+  168 | IMG_20261031_170400(1).jpg                                 | focus=0        | beach with the dog (same trip as Jul 2022?)
   011 | 20220721_173807.jpeg                                       | focus=0        | Jul 2022
+  191 | IMG_20261102_221848(1).heic                                | focus=1        | Jul 2022
+  225 | IMG_20261110_130745(1).heic                                | focus=0        | with the baby, Jul 2022
   012 | 20220731_152550.jpeg                                       | focus=1        | Jul 2022
 + 083 | Screenshot_20220801-140804_Instagram.jpeg                  | focus=0        | Aug 2022
   087 | BATCH2/28859135848ee993431b3b99001de562.jpeg               | focus=4 crop=.19,.20,.925,.905 | Medieval Times print, Jul 31 2022
@@ -102,8 +191,32 @@
   071 | IMG_3347.jpeg                                              | focus=2        | Deadwood
   078 | IMG_8035.heic                                              | focus=0        | red rocks
   072 | IMG_3348.jpeg                                              | focus=0
+  224 | IMG_20261110_130742(1).heic                                | focus=1        | with the baby, Oct 2022
+  223 | IMG_20261110_130738(1).heic                                | focus=1        | with the baby, Oct 2022
+  192 | IMG_20261102_221857(1).heic                                | focus=1        | on the grass, Oct 2022
+  256 | Screenshot_20221022-203754_WhatsApp.jpg                    | focus=0        | ballgame, Oct 2022
+  222 | IMG_20261110_130734(1).heic                                | focus=0        | with the baby, Nov 2022
+  167 | IMG_20261031_170350.heic                                   | focus=0        | Jan 2023
+  257 | Screenshot_20230206-231715_Instagram.jpg                   | focus=c        | ? by the river, Feb 2023, which one is Lino
+  125 | IMG-20230326-WA0000.jpg                                    | focus=1        | Mar 2023
+  113 | 20230327_133415.jpg                                        | focus=0        | creek, Mar 2023
+  126 | IMG-20230327-WA0000.jpg                                    | focus=0        | waterfall, Mar 2023
+  127 | IMG-20230327-WA0008.jpg                                    | focus=1        | waterfall, Mar 2023
+  203 | IMG_20261103_234242.jpg                                    | focus=0        | by the creek (same day as Mar 2023?)
+  264 | Screenshot_20261110_171442_Gallery.jpg                     | focus=0        | waterfall (same day as Mar 2023?)
+  128 | IMG-20230625-WA0001.jpg                                    | focus=0        | in a suit, Jun 2023
   013 | 20230628_104053.jpeg                                       | focus=.53,.44  | Jun 2023
 + 014 | 20230628_124146.jpeg                                       | focus=.62,.22  | Jun 2023
+  114 | 20230628_130318.mp4                                        | focus=c        | clip: mariachi lunch, Jun 2023
+  205 | IMG_20261104_153524.jpg                                    | focus=0        | mariscos lunch (same trip as Jun 2023?)
+  129 | IMG-20230629-WA0009.jpg                                    | focus=0        | lava field, Jun 2023
+  130 | IMG-20230629-WA0010.jpg                                    | focus=1        | Jun 2023
+  131 | IMG-20230629-WA0013.jpg                                    | focus=0        | Jun 2023
+  116 | FB_IMG_1689640334415.jpg                                   | focus=c        | ? big family photo, Jul 2023, which one is Lino
+  117 | FB_IMG_1689643036880.jpg                                   | focus=c        | ? big family photo, Jul 2023, which one is Lino
+  132 | IMG-20230726-WA0009.jpg                                    | focus=0        | beach, Jul 2023
+  133 | IMG-20230726-WA0013.jpg                                    | focus=0        | beach, Jul 2023
+  135 | IMG-20231105-WA0016.jpg                                    | focus=3        | ? night concert, Lino taken as the man on the right
   084 | Screenshot_20231105-013110_Instagram.jpeg                  | focus=0        | Nov 2023
 - 009 | 20211020_135323.jpeg                                       | focus=c        | he's very small in this one
 - 073 | IMG_3349.jpeg                                              | focus=c        | he's very small in this one
@@ -119,6 +232,90 @@
   057 | IMG_1165.jpeg                                              | focus=5
   086 | View rece.jpeg                                             | focus=1
   053 | IMG-20260610-WA0007.jpeg                                   | focus=1
+  136 | IMG-20240116-WA0006.jpg                                    | focus=0        | snow with the dog, Jan 2024
+  146 | IMG_20240214_154935_853.webp                               | focus=0        | Valentine's 2024
+  169 | IMG_20261031_170408.heic                                   | focus=0        | Feb 2024
+  180 | IMG_20261102_104033(1).heic                                | focus=0        | concert, Mar 2024
+  204 | IMG_20261104_153502.heic                                   | focus=0        | concert, Mar 2024
+  206 | IMG_20261105_210308.heic                                   | focus=0        | concert, Mar 2024
+  182 | IMG_20261102_104036(1).heic                                | focus=c        | ? Apr 2024, which one is Lino
+  183 | IMG_20261102_104042(1).heic                                | focus=1        | ? club, Apr 2024
+  185 | IMG_20261102_104051.heic                                   | focus=0        | Las Vegas, Apr 2024
+  258 | Screenshot_20240408-153943_Samsung Internet(1).jpg         | focus=0        | Las Vegas, Apr 2024
+  137 | IMG-20240521-WA0028.jpg                                    | focus=1        | graduation, May 2024
+  170 | IMG_20261031_170413.heic                                   | focus=0        | Jun 2024
+  156 | IMG_20261031_170224.heic                                   | focus=0        | cattle field, Jun 2024
+  172 | IMG_20261031_170420.heic                                   | focus=0        | red rocks, Jul 2024
+  261 | Screenshot_20261031_052620_Instagram.jpg                   | focus=0        | red rocks (same trip as Jul 2024?)
+  155 | IMG_20261031_170217(1).heic                                | focus=0        | empty main street, Jul 2024
+  190 | IMG_20261102_221836(1).heic                                | focus=0        | sunset, Jul 2024
+  138 | IMG-20240810-WA0000.jpg                                    | focus=2        | ? swings at night, Aug 2024
+  173 | IMG_20261031_170425.heic                                   | focus=0        | Aug 2024
+  259 | Screenshot_20240816-181408_Instagram(1).jpg                | focus=0        | catfish, Aug 2024
+  174 | IMG_20261031_170436(1).heic                                | focus=0        | Aug 2024
+  175 | IMG_20261031_170441.heic                                   | focus=0        | golf, Sep 2024
+  220 | IMG_20261110_130725.heic                                   | focus=0        | concert, Jun 2025
+  218 | IMG_20261110_130719.heic                                   | focus=1        | with the little one, Jun 2025
+  217 | IMG_20261110_130710.jpg                                    | focus=c        | ? dinner, Aug 2025, which one is Lino
+  219 | IMG_20261110_130722.jpg                                    | focus=0        | beach, Aug 2025
+  215 | IMG_20261110_130631.jpg                                    | focus=c        | ? group by the water, Aug 2025, which one is Lino
+  216 | IMG_20261110_130636.heic                                   | focus=0        | ? Aug 2025, Lino taken as the man on the left
+  176 | IMG_20261031_170443(1).heic                                | focus=0        | in a suit, Aug 2025
+  139 | IMG-20251228-WA0050.jpg                                    | focus=0        | Christmas 2025
+  140 | IMG-20251228-WA0051.jpg                                    | focus=1        | Christmas 2025
+  141 | IMG-20251228-WA0054.jpg                                    | focus=0        | Christmas 2025
+  151 | IMG_20261011_221809.heic                                   | focus=1        | ? Jan 2026, Lino taken as the man in the back with sunglasses
+  184 | IMG_20261102_104048(1).heic                                | focus=1        | micheladas, Jan 2026
+  287 | VID-20260216-WA0005.mp4                                    | focus=c        | clip: beach and sky, Feb 2026
+  288 | VID-20260620-WA0000.mp4                                    | focus=c        | clip: underwater, Jun 2026
+  142 | IMG-20260707-WA0013(1).jpg                                 | focus=1        | graduation, Jul 2026
+  101 | 1695506675.jpg                                             | focus=c        | red corridor (the person with him?)
+  102 | 1806432394.jpg                                             | focus=0        | red corridor
+  118 | FB_IMG_1791664304226.jpg                                   | focus=0        | dressed up
+  121 | FullSizeR(2).jpg                                           | focus=c        | under the big tree
+  148 | IMG_20261008_224253(1).jpg                                 | focus=0        | selfie above the street
+  164 | IMG_20261031_170336(1).jpg                                 | focus=0        | waterfall
+  186 | IMG_20261102_104110(1).jpg                                 | focus=1        | Christmas presents
+  189 | IMG_20261102_104347(1).jpg                                 | focus=c        | ? graduation, which one is Lino
+  193 | IMG_20261103_233906.jpg                                    | focus=1        | Christmas market
+  201 | IMG_20261103_234103.jpg                                    | focus=c        | on the rocks above the pines
+  202 | IMG_20261103_234200.heic                                   | focus=0        | walking on the beach
+  236 | IMG_20261110_130905(1).jpg                                 | focus=1        | ? party photo
+  237 | IMG_20261110_130918(1).jpg                                 | focus=4        | ? party photo
+  250 | IMG_20261111_222906_457.jpg                                | focus=1        | lunch with a friend
+  255 | IMG_2436.jpg                                               | focus=0        | jet ski
+  262 | Screenshot_20261104_144511_Gallery.jpg                     | focus=0        | in the woods
+  263 | Screenshot_20261110_171140_Gallery.jpg                     | focus=0        | filtered selfie
+  265 | Screenshot_20261110_171819_Gallery.jpg                     | focus=0        | lying on the grass (framed edit)
+  267 | Screenshot_20261110_172515_Gallery.jpg                     | focus=3        | ? Lino taken as the man on the right
+  289 | VID_20261010_005912_235(1).mp4                             | focus=0        | clip: playing guitar
+  290 | VID_20261027_213740(1).mp4                                 | focus=c        | clip: walking on the beach
+  292 | VID_20261031_170205.mp4                                    | focus=c        | clip: walking the dog
+  293 | VID_20261031_170300(1).mp4                                 | focus=0        | clip: playing guitar
+  177 | IMG_20261031_170447.jpg                                    | focus=c        | collage of many photos
+  179 | IMG_20261101_064845_581.jpg                                | focus=0        | tribute portrait in the light (closing photo)
   080 | Screenshot 2025-10-01 at 10.44.13 PM.jpeg                  | focus=0        | final portrait
 - 020 | 7a96ad844e73476bbcc7fa82f1703009.mov                       | focus=c        | video clip (not used yet)
 - 048 | cff8d7d7e2474402ae74b0c0fc3b5190.mov                       | focus=c        | video clip (not used yet)
+- 104 | 20210813_190603.jpg                                        | focus=0        | near-duplicate of 105
+- 120 | FB_IMG_1792814021827.jpg                                   | focus=c        | duplicate of 201
+- 124 | IMG-20220606-WA0004.jpg                                    | focus=0        | near-duplicate of 123
+- 134 | IMG-20231105-WA0009.jpg                                    | focus=c        | video-call screenshot, someone else in frame
+- 143 | IMG_1354(1).jpg                                            | focus=0        | screenshot of 254 (with the puppy)
+- 144 | IMG_1693.jpg                                               | focus=1        | duplicate of 226
+- 149 | IMG_20261010_065128.heic                                   | focus=0        | hospital: left out (your call)
+- 150 | IMG_20261011_075723_068.png                                | focus=c        | hospital bed, holding hands: left out (your call)
+- 153 | IMG_20261016_182235.heic                                   | focus=c        | work memorial certificate: left out (your call)
+- 171 | IMG_20261031_170418.heic                                   | focus=0        | near-duplicate of 155
+- 178 | IMG_20261101_064756_107.jpg                                | focus=0        | closer crop of 179 (tribute portrait)
+- 181 | IMG_20261102_104033.heic                                   | focus=0        | near-duplicate of 180
+- 187 | IMG_20261102_104115(1).jpg                                 | focus=c        | photo of a race photo, hard to see
+- 188 | IMG_20261102_104233(1).jpg                                 | focus=c        | duplicate of 257
+- 194 | IMG_20261103_233913.jpg                                    | focus=c        | stack of crooked prints, hard to read
+- 197 | IMG_20261103_233958.jpg                                    | focus=c        | hospital: left out (your call)
+- 229 | IMG_20261110_130834(1).heic                                | focus=c        | near-duplicate of 227/228
+- 238 | IMG_20261110_130920(1).jpg                                 | focus=5        | near-duplicate party photo
+- 243 | IMG_20261110_130943(1).jpg                                 | focus=0        | duplicate of 232
+- 247 | IMG_20261110_131005(1).jpg                                 | focus=1        | near-duplicate of 235
+- 282 | Snapchat-516638013(1).jpg                                  | focus=c        | sideways copy of 283
+- 285 | Snapchat-792470298(1).mp4                                  | focus=c        | clip only 1.5 s long (face-swap filter)

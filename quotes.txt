@@ -97,3 +97,82 @@
 086         | 0.86 | Gentle hands, even when the world was loud.
 053         | 0.80 | Sunlight, and someone beside you.
 080         | 0.88 | This is how we'll always remember you.
+
+# ---- new photos (Nov 2026) ----
+260         | 0.88 | Heart-shaped glasses and a grin to match.
+252         | 0.66 | Where it all began.
+145_011a6e  | 0.84 | Even then, the camera loved you.
+152         | 0.80 | Long hair, no worries.
+221_e293c1  | 0.82 | Sharp suit, steady gaze.
+198         | 0.78 | Young, wild, and going everywhere.
+210         | 0.74 | Kids who grew up together.
+266         | 0.72 | Bundled up for the snow.
+249         | 0.86 | A heart big enough for every stray.
+254         | 0.88 | Pure love, both ways.
+283         | 0.86 | Always looking for the shot.
+284         | 0.82 | Out in the desert, chasing the light.
+208         | 0.84 | Best seat in the house, with the best company.
+207         | 0.80 | Never too old for a good game.
+209         | 0.80 | That grin never needed a reason.
+103         | 0.84 | Dressed to the nines, side by side.
+280         | 0.86 | A thousand lights, and you were the one we saw.
+270         | 0.78 | Every meal was a celebration.
+273         | 0.80 | Neon nights and easy smiles.
+274         | 0.84 | Dressed up and in love.
+277         | 0.72 | Every drive was better with you.
+195         | 0.80 | Quiet confidence, always.
+196         | 0.86 | Never could keep a straight face.
+231         | 0.86 | Gentle hands, even with the smallest ones.
+105         | 0.78 | Good food, cold drinks, easy afternoons.
+108         | 0.80 | Home for the holidays.
+163         | 0.82 | Out on the trail, with the whole family.
+228         | 0.80 | Getting ready for someone new to love.
+251         | 0.80 | Celebrating the life on its way.
+154         | 0.82 | The man with the gifts.
+109         | 0.86 | Your dog, your person, your view.
+111         | 0.82 | Golden hour on the hill.
+157         | 0.82 | Wildflowers and good company.
+159         | 0.80 | Sun on your face and somewhere to go.
+160         | 0.82 | Close, the way the best nights are.
+123         | 0.86 | Dressed up for love.
+239         | 0.88 | Holding the future in his arms.
+226         | 0.86 | That little face in your hands.
+165         | 0.82 | Bare feet and an open sky.
+166         | 0.86 | You and your best friend, on a long, quiet beach.
+225         | 0.82 | Making room for the littlest guest.
+224         | 0.84 | The softest hands in the room.
+192         | 0.82 | Lying back, sky above, no hurry at all.
+222         | 0.84 | Little ones always found their way to you.
+256         | 0.80 | Game day, best seats in the house.
+167         | 0.84 | Sunshine, a dog, and that look.
+126         | 0.86 | Chasing waterfalls, together.
+127         | 0.80 | Mist on our faces, and still smiling.
+264         | 0.84 | Love at the edge of the falls.
+128         | 0.82 | Suited up for a big day.
+205         | 0.78 | Long lunches, cold drinks, no rush.
+130         | 0.82 | Family wherever you went.
+132         | 0.86 | Sun, sand, and the one you loved.
+136         | 0.84 | Snow, the pup, and the person who made it home.
+146         | 0.82 | Every concert was better beside you.
+169         | 0.84 | That smile lit up any shade.
+185         | 0.80 | Bright lights and good company.
+137         | 0.84 | So proud of the people you loved.
+170         | 0.86 | Wide open country, wide open heart.
+156         | 0.80 | Out where the land runs on forever.
+172         | 0.84 | Red rock, blue sky, a moment to rest.
+155         | 0.84 | The whole street, all to yourself.
+190         | 0.88 | Facing the sun, the way you always did.
+173         | 0.82 | Into the green, wherever it led.
+175         | 0.80 | Hat on, sun out, one more swing.
+218         | 0.82 | Gentle with the little ones, always.
+219         | 0.82 | Long days at the beach with everyone.
+176         | 0.84 | Sharp as ever.
+139         | 0.84 | Christmas, with the ones who mattered.
+184         | 0.78 | Cold drinks, warm afternoons.
+142         | 0.84 | Proud, every step of the way.
+201         | 0.86 | Above the pines, side by side.
+202         | 0.84 | Walk on, brother.
+293         | 0.86 | Strumming, lost in it, just for the love of it.
+290         | 0.84 | Walking into the evening, together.
+177         | 0.86 | Look at all the life you lived.
+179         | 0.90 | Forever in the light.
