@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Long Live Lino</title>
+<style>
+  :root {
+    --ink: rgba(246, 241, 232, .94);
+    --soft: rgba(246, 241, 232, .62);
+    --faint: rgba(246, 241, 232, .32);
+    --serif: "Didot", "Bodoni 72", "Bodoni MT", "Playfair Display", Georgia, serif;
+    --sans: "Avenir Next", "Avenir", "Helvetica Neue", Helvetica, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #000; color: var(--ink); }
+  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; user-select: none; }
+  body.idle, body.idle * { cursor: none; }
+
+  #stage { position: fixed; inset: 0; overflow: hidden; background: #000; }
+  .layer { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .layer .bg { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; will-change: transform; }
+  .layer .frame { position: absolute; will-change: transform; }
+  .layer .frame > img, .layer .frame > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .layer.contain .frame { box-shadow: 0 3vh 8vh rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .035); }
+
+  /* title and closing cards */
+  .card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    background: radial-gradient(ellipse at 50% 46%, #17130f 0%, #070605 48%, #000 78%);
+  }
+  .card > * { opacity: 0; transform: translateY(10px); transition: opacity 2.8s ease, transform 3.4s cubic-bezier(.2, .7, .2, 1); }
+  .card.on > * { opacity: 1; transform: none; }
+  .card.on > :nth-child(2) { transition-delay: .7s; }
+  .card.on > :nth-child(3) { transition-delay: 1.4s; }
+  .card.on > :nth-child(4) { transition-delay: 1.9s; }
+  .card .top { font-size: clamp(10px, 1vw, 19px); letter-spacing: .52em; margin-right: -.52em; text-transform: uppercase; color: var(--soft); }
+  .card .name { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 5.6vw, 112px); line-height: 1.04; margin: 3.4vh 4vw 3.2vh; }
+  .card .rule { width: 5.5vw; min-width: 44px; height: 1px; background: rgba(246, 241, 232, .34); margin-bottom: 3.2vh; }
+  .card .dates { font-size: clamp(9px, .92vw, 17px); letter-spacing: .44em; margin-right: -.44em; text-transform: uppercase; color: var(--soft); white-space: pre; }
+  .card.end .name { font-style: italic; margin-top: 0; }
+
+  #vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, .42) 100%); }
+  #shade { position: fixed; left: 0; right: 0; bottom: 0; height: 34vh; pointer-events: none; opacity: 0;
+           background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .6)); transition: opacity 1.8s ease; }
+  body.quoted #shade { opacity: 1; }
+  #quote {
+    position: fixed; left: 50%; bottom: max(6.5vh, 24px); width: min(72vw, 1150px); pointer-events: none;
+    transform: translate(-50%, 8px); filter: blur(4px); opacity: 0; text-align: center;
+    font-family: var(--serif); font-style: italic; font-size: clamp(18px, 1.95vw, 40px); line-height: 1.34; letter-spacing: .01em;
+    color: rgba(250, 246, 238, .95); text-shadow: 0 2px 16px rgba(0, 0, 0, .85), 0 0 42px rgba(0, 0, 0, .55);
+    transition: opacity 1.6s ease, transform 2.2s cubic-bezier(.2, .7, .2, 1), filter 1.6s ease;
+  }
+  #quote.on { opacity: 1; transform: translate(-50%, 0); filter: blur(0); }
+  #sig {
+    position: fixed; right: max(3.4vw, 18px); bottom: max(4.2vh, 16px); pointer-events: none;
+    font-family: var(--serif); font-size: clamp(11px, .95vw, 18px); letter-spacing: .14em; color: var(--faint);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .7); transition: opacity 1.6s ease;
+  }
+  body.carding #sig, body.quoted #sig { opacity: 0; }
+  .note {
+    position: fixed; top: max(3.5vh, 16px); left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap;
+    font-size: 11px; letter-spacing: .4em; margin-right: -.4em; text-transform: uppercase; color: var(--faint);
+    opacity: 0; transition: opacity 1.2s ease;
+  }
+  .note.on { opacity: 1; }
+  @media (max-aspect-ratio: 1/1) { #quote { width: 88vw; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="vignette"></div>
+<div id="shade"></div>
+<div id="quote"></div>
+<div id="sig">Paulino &middot; 1985&ndash;2026</div>
+<div id="hint" class="note">Press F for full screen</div>
+<div id="paused" class="note">Paused</div>
+
+<script src="slides.js"></script>
+<script>
+(() => {
+  "use strict";
+  const D = window.SLIDES, T = D.title;
+  const FADE = 2.2;          // seconds, cross-dissolve
+  const BASE = 9;            // seconds per photo
+  const TITLE = 12, END = 8; // seconds on the opening and closing cards
+
+  // ---------------------------------------------------------------- running order
+  const seq = [{ kind: "card", type: "title", dur: TITLE }];
+  for (const c of D.chapters) for (const s of c.slides) seq.push(Object.assign({ slow: c.slow }, s));
+  seq.push({ kind: "card", type: "end", dur: END });
+  const N = seq.length;
+  const wrap = i => ((i % N) + N) % N;
+
+  // time from the start of this slide's fade-in to the start of the next one
+  function holdFor(s) {
+    if (s.kind === "card") return s.dur;
+    if (s.kind === "clip") return s.dur < 5 ? Math.ceil(6 / s.dur) * s.dur - 0.3 : Math.max(4, s.dur - 0.6);
+    return BASE * (s.slow ? 1.4 : 1) * (s.hold ? 1.6 : 1) + (s.quote ? 2 : 0);
+  }
+
+  // ---------------------------------------------------------------- building a slide
+  const stage = document.getElementById("stage");
+  const live = new Set();
+
+  function cardHTML(type) {
+    const esc = t => String(t).replace(/[&<>]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]);
+    if (type === "title")
+      return `<div class="top">${esc(T.title_top)}</div><div class="name">${esc(T.title_name)}</div>` +
+             `<div class="rule"></div><div class="dates">${esc(T.title_dates)}</div>`;
+    return `<div class="name">${esc(T.end_text)}</div><div class="rule"></div>`;
+  }
+
+  function waitVideo(v) {
+    return new Promise((resolve, reject) => {
+      const done = ok => { clearTimeout(timer); v.oncanplaythrough = v.onerror = null; ok ? resolve() : reject(new Error("video")); };
+      const timer = setTimeout(() => done(v.readyState >= 3), 12000);
+      v.oncanplaythrough = () => done(true);
+      v.onerror = () => done(false);
+      v.load();
+    });
+  }
+
+  async function prepare(i) {
+    const s = seq[i];
+    const el = document.createElement("div");
+    el.className = "layer";
+    const L = { i, s, el };
+    if (s.kind === "card") {
+      el.classList.add("card", s.type);
+      el.innerHTML = cardHTML(s.type);
+      return L;
+    }
+    const bg = new Image();
+    bg.className = "bg"; bg.alt = ""; bg.src = `media/${s.key}.bg.jpg`;
+    const frame = document.createElement("div");
+    frame.className = "frame";
+    let media;
+    if (s.kind === "clip") {
+      media = document.createElement("video");
+      media.muted = true; media.defaultMuted = true; media.playsInline = true;
+      media.setAttribute("muted", ""); media.setAttribute("playsinline", "");
+      media.preload = "auto"; media.loop = s.dur < 5;
+      media.src = `media/${s.key}.mp4`;
+      await waitVideo(media);
+    } else {
+      media = new Image();
+      media.alt = ""; media.src = `media/${s.key}.jpg`;
+      await media.decode();
+    }
+    try { await bg.decode(); } catch (e) { /* the photo still shows on black */ }
+    frame.append(media);
+    el.append(bg, frame);
+    return Object.assign(L, { bg, frame, media });
+  }
+
+  // fill the screen when the shape is close to the screen's; otherwise show it whole over its blur
+  function layout(L) {
+    if (!L.frame) return;
+    const s = L.s, W = innerWidth, H = innerHeight;
+    const cover = Math.abs(Math.log((s.w / s.h) / (W / H))) < Math.log(1.2);
+    L.el.classList.toggle("contain", !cover);
+    const f = L.frame.style;
+    if (cover) {
+      Object.assign(f, { left: "0px", top: "0px", width: W + "px", height: H + "px" });
+      const k = s.keep, px = k ? (k[0] + k[2]) / 2 : s.fx, py = k ? (k[1] + k[3]) / 2 : s.fy;
+      L.media.style.objectPosition = `${(px * 100).toFixed(1)}% ${(py * 100).toFixed(1)}%`;
+    } else {
+      const k = Math.min(W * 0.9 / s.w, H * 0.88 / s.h), fw = s.w * k, fh = s.h * k;
+      Object.assign(f, { left: (W - fw) / 2 + "px", top: (H - fh) / 2 + "px", width: fw + "px", height: fh + "px" });
+    }
+    f.transformOrigin = `${(s.fx * 100).toFixed(1)}% ${(s.fy * 100).toFixed(1)}%`;
+    L.cover = cover;
+  }
+
+  // ---------------------------------------------------------------- playback
+  let cur = null, pending = null, busy = false, paused = false;
+  let clock = 0, hold = 0, last = performance.now();
+
+  async function load(i) {
+    for (let tries = 0; tries < N; tries++, i = wrap(i + 1)) {
+      try { return await prepare(i); }
+      catch (e) { console.warn("skipped", seq[i].key, e); }
+    }
+    throw new Error("nothing to show");
+  }
+  function preload(i) { pending = { i, promise: load(i) }; }
+
+  function show(L, fade) {
+    const old = cur;
+    cur = L; clock = 0; hold = holdFor(L.s);
+    stage.append(L.el);
+    live.add(L);
+    layout(L);
+    const span = (hold + fade + 1.5) * 1000;
+    L.anims = [];
+    if (L.frame) {
+      const a = L.cover ? 1.03 : 1, b = L.cover ? 1.1 : 1.045;
+      const [s0, s1] = L.i % 2 ? [b, a] : [a, b];        // push in, then ease back out on the next
+      L.anims.push(L.frame.animate([{ transform: `scale(${s0})` }, { transform: `scale(${s1})` }],
+                                   { duration: span, easing: "linear", fill: "forwards" }));
+      L.anims.push(L.bg.animate([{ transform: "scale(1)" }, { transform: "scale(1.06)" }],
+                                { duration: span, easing: "linear", fill: "forwards" }));
+    }
+    if (L.s.kind === "clip") { L.media.currentTime = 0; L.media.play().catch(() => {}); }
+    L.fadeIn = L.el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fade * 1000, easing: "ease-in-out", fill: "forwards" });
+    L.anims.push(L.fadeIn);
+    if (L.s.kind === "card") requestAnimationFrame(() => requestAnimationFrame(() => L.el.classList.add("on")));
+    document.body.classList.toggle("carding", L.s.kind === "card");
+    if (paused) setPaused(true);
+    if (old) L.fadeIn.finished.then(() => retire(old), () => retire(old));
+  }
+
+  function retire(L) {
+    if (!live.has(L)) return;
+    live.delete(L);
+    L.anims.forEach(a => a.cancel());
+    if (L.media && L.media.tagName === "VIDEO") { L.media.pause(); L.media.removeAttribute("src"); L.media.load(); }
+    L.el.remove();
+  }
+
+  async function go(i, fade) {
+    if (busy) return;
+    busy = true;
+    try {
+      const L = pending && pending.i === i ? await pending.promise : await load(i);
+      pending = null;
+      show(L, fade);
+      preload(wrap(L.i + 1));
+    } finally { busy = false; }
+  }
+
+  // ---------------------------------------------------------------- quote
+  const quoteEl = document.getElementById("quote");
+  let quoteOn = false;
+  function updateQuote() {
+    const q = cur && cur.s.quote;
+    const want = !!q && clock > 1.8 && clock < hold - 1.3;
+    if (want === quoteOn) return;
+    quoteOn = want;
+    if (want) quoteEl.textContent = q;
+    quoteEl.classList.toggle("on", want);
+    document.body.classList.toggle("quoted", want);
+  }
+
+  function tick(now) {
+    const dt = Math.min(0.25, (now - last) / 1000);
+    last = now;
+    if (cur && !paused && !busy) {
+      clock += dt;
+      updateQuote();
+      if (clock >= hold) go(wrap(cur.i + 1), FADE);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------------------------------------------------------------- controls
+  const pausedEl = document.getElementById("paused");
+  function setPaused(p) {
+    paused = p;
+    for (const L of live) {
+      L.anims.forEach(a => p ? a.pause() : a.play());
+      if (L.media && L.media.tagName === "VIDEO" && L === cur) p ? L.media.pause() : L.media.play().catch(() => {});
+    }
+    pausedEl.classList.toggle("on", p);
+  }
+  function fullscreen() {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(() => {});
+  }
+  addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "f" || e.key === "F") fullscreen();
+    else if (e.key === " ") { e.preventDefault(); setPaused(!paused); }
+    else if (e.key === "ArrowRight" && cur) go(wrap(cur.i + 1), 0.9);
+    else if (e.key === "ArrowLeft" && cur) go(wrap(cur.i - 1), 0.9);
+    else return;
+  });
+  addEventListener("dblclick", fullscreen);
+  addEventListener("resize", () => live.forEach(layout));
+
+  let idleTimer = 0;
+  function wake() {
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => document.body.classList.add("idle"), 2500);
+  }
+  addEventListener("mousemove", wake);
+  wake();
+
+  // keep the screen on (where the browser allows it)
+  let lock = null;
+  async function keepAwake() { try { lock = await navigator.wakeLock.request("screen"); } catch (e) { /* not available */ } }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") keepAwake(); });
+  keepAwake();
+
+  const hint = document.getElementById("hint");
+  if (!document.fullscreenElement) { hint.classList.add("on"); setTimeout(() => hint.classList.remove("on"), 5000); }
+
+  // #12 starts at the 12th photo
+  const start = Math.max(0, Math.min(N - 1, parseInt(location.hash.slice(1), 10) || 0));
+  go(start, FADE);
+  requestAnimationFrame(tick);
+  window.SHOW = { seq, go: i => go(wrap(i), 0.9), get index() { return cur && cur.i; } };   // for checking from the console
+})();
+</script>
+</body>
+</html>
