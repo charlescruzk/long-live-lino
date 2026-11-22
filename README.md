@@ -39,8 +39,6 @@ originals carry GPS metadata. Everything in `docs/` is re-encoded without it.
 
 - `timeline.txt` holds the order, chapters, which face is Lino (`focus=`), crops (`crop=`) and
   clip ranges (`clip=`). A `-` in front leaves a photo out. Notes starting with `?` are guesses.
-- `quotes.txt` holds one line per photo with a confidence score. Only lines at or above
-  `quote_min` in `build/config.json` (0.80) appear.
 - The title, name and dates on the cards come from `build/config.json`.
 
 The music videos (`build/render.py`, `build/update.sh`) still work from the same timeline.

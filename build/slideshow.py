@@ -2,7 +2,7 @@
 
   .venv/bin/python build/slideshow.py
 
-It reads timeline.txt, quotes.txt and build/config.json. Photos keep the same
+It reads timeline.txt and build/config.json. Photos keep the same
 crops, border trim, Lino focus point and colour grade as the videos (render.py).
 It writes:
   docs/media/<key>.jpg      the graded photo (re-encoded, so no camera/GPS metadata)
@@ -30,18 +30,6 @@ CLIP_MAX = 9.0            # seconds
 CLIP_GRADE = ("eq=contrast=1.05:saturation=0.9,"
               "colorchannelmixer=rr=1.025:bb=0.965,"
               "lutrgb=r='8+val*0.95':g='8+val*0.95':b='8+val*0.95'")
-
-
-def read_quotes(minimum):
-    """quotes.txt: photo | confidence | line. Keeps lines at or above `minimum`."""
-    out = {}
-    for raw in (ROOT / "quotes.txt").read_text().splitlines():
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
-        key, conf, line = (f.strip() for f in (raw.split("|", 2) + ["", ""])[:3])
-        if line and float(conf or 0) >= minimum:
-            out[key] = line
-    return out
 
 
 def save_jpg(a, path, quality):
@@ -119,7 +107,6 @@ def main():
     manifest = json.loads((BUILD / "manifest.json").read_text())["items"]
     render.MANIFEST_BY_ID = by_id = {e["id"]: e for e in manifest.values()}
     cfg = json.loads((BUILD / "config.json").read_text())
-    quotes = read_quotes(cfg.get("quote_min", 0.8))
     MEDIA.mkdir(parents=True, exist_ok=True)
 
     chapters, written = [], set()
@@ -137,7 +124,7 @@ def main():
                 written |= {out.name, f"{key}.bg.jpg"}
                 slides.append(dict(key=key, kind="clip", w=w, h=h, dur=round(dur, 2),
                                    fx=round(fp[0], 3) if fp else 0.5, fy=round(fp[1], 3) if fp else 0.45,
-                                   quote=quotes.get(key) or quotes.get(e["id"]), hold="hold" in it))
+                                   hold="hold" in it))
                 n_clip += 1
                 continue
             key = it["id"] + ("_" + hashlib.md5(crop.encode()).hexdigest()[:6] if crop else "")
@@ -155,7 +142,7 @@ def main():
                 fy=round(fpt[1] / h, 3) if fpt else 0.45,
                 keep=[round(keep[0] / w, 3), round(keep[1] / h, 3), round(keep[2] / w, 3), round(keep[3] / h, 3)]
                 if keep else None,
-                quote=quotes.get(key), hold="hold" in it))
+                hold="hold" in it))
             n_photo += 1
         chapters.append(dict(name=c["name"], slow=c["slow"], slides=slides))
 
@@ -164,9 +151,8 @@ def main():
             f.unlink()
     data = dict(title=cfg, chapters=chapters)
     (WEB / "slides.js").write_text("window.SLIDES = " + json.dumps(data, separators=(",", ":")) + ";\n")
-    q = sum(1 for c in chapters for s in c["slides"] if s["quote"])
     mb = sum(f.stat().st_size for f in MEDIA.iterdir()) / 1e6
-    print(f"docs/: {n_photo} photos, {n_clip} clips, {q} quotes, {mb:.0f} MB in docs/media -> {WEB / 'index.html'}")
+    print(f"docs/: {n_photo} photos, {n_clip} clips, {mb:.0f} MB in docs/media -> {WEB / 'index.html'}")
 
 
 if __name__ == "__main__":
